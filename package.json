@@ -1,0 +1,30 @@
+{
+    "name": "scroll.js",
+    "version": "0.1.0",
+    "description": "Scroll.js",
+    "keywords": [],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/z-ax/scroll.js"
+    },
+    "dependencies": {},
+    "devDependencies": {
+        "gulp": "*",
+        "gulp-autoprefixer": "*",
+        "gulp-concat": "*",
+        "gulp-jade": "*",
+        "gulp-jshint": "*",
+        "gulp-less": "*",
+        "gulp-livereload": "*",
+        "gulp-uglify": "*",
+        "gulp-wrapper": "*",
+        "del": "*",
+        "ecstatic": "*",
+        "jshint-stylish": "*",
+        "moment": "*"
+    },
+    "engines": {
+        "node": ">=0.10.31"
+    },
+    "private": true
+}

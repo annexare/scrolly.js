@@ -1,0 +1,11 @@
+{
+    "name": "scroll.js",
+    "version": "0.1.0",
+    "description": "Scroll.js",
+    "keywords": [],
+    "dependencies": {
+    },
+    "devDependencies": {
+        "jbone": "*"
+    }
+}

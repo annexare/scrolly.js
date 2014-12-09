@@ -1,0 +1,25 @@
+{
+  "name": "jbone",
+  "version": "1.0.20",
+  "main": "dist/jbone.js",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components"
+  ],
+  "devDependencies": {
+    "mocha": "1.18.2",
+    "expect": "0.2.0",
+    "astrobench": "0.1.1"
+  },
+  "homepage": "https://github.com/kupriyanenko/jbone",
+  "_release": "1.0.20",
+  "_resolution": {
+    "type": "version",
+    "tag": "1.0.20",
+    "commit": "f9a5dacc5f4ed3a7df32953b269684b5745a030a"
+  },
+  "_source": "git://github.com/kupriyanenko/jbone.git",
+  "_target": "*",
+  "_originalSource": "jbone"
+}

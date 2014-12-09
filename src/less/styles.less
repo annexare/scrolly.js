@@ -1,0 +1,23 @@
+@scroll-width: 8px;
+
+.scroll {
+    &.area {
+        display: block;
+        overflow: hidden;
+        position: absolute;
+    }
+    &.bar {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: @scroll-width;
+
+        .thumb {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: @scroll-width;
+            height: @scroll-width;
+        }
+    }
+}
