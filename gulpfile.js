@@ -11,7 +11,6 @@ var gulp = require('gulp'),
     del = require('del'),
     fs = require('fs'),
     moment = require('moment'),
-    stylish = require('jshint-stylish'),
     lr = false
     ;
 
@@ -105,10 +104,10 @@ gulp.task('less', function () {
  */
 gulp.task('build', function () {
     return gulp.src([
+        vendor('dataset.js'),
         src.js
     ])
         .pipe(concat('scroll.js', { newLine: ';\n\n' }))
-        .pipe(uglify())
         .pipe(wrapper({ header: banner() + '\n' }))
         .pipe(gulp.dest(paths.js));
 });
@@ -118,11 +117,15 @@ gulp.task('build', function () {
  */
 gulp.task('vendor', function () {
     return gulp.src([
+        // Temporary, for quick proto
         vendor('jbone/dist/jbone.min.js')
     ])
         .pipe(concat('vendor.js', { newLine: ';\n\n' }))
         .pipe(uglify())
-        .pipe(wrapper({ header: banner() + '\n' }))
+        .pipe(wrapper({
+            header: banner() + '\n',
+            footer: ';\n $ = jBone;\n'
+        }))
         .pipe(gulp.dest(paths.js));
 });
 
@@ -148,9 +151,9 @@ gulp.task('serve', ['build-all'], function() {
 });
 
 gulp.task('watch', ['serve'], function () {
-    gulp.watch(paths.jade + masks.all, ['jade']);
-    gulp.watch(paths.js + masks.all, ['build']);
-    gulp.watch(paths.less[0] + masks.all, ['less']);
+    gulp.watch(src.jade, ['jade']);
+    gulp.watch(src.js, ['jshint', 'build']);
+    gulp.watch(src.less, ['less']);
 
     gulp.watch(paths.server + masks.all).on('change', livereload.changed);
 });

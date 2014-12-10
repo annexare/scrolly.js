@@ -1,18 +1,29 @@
 @scroll-width: 8px;
+@scroll-z-index: 1;
 
 .scroll {
-    &.area {
-        display: block;
-        overflow: hidden;
-        position: absolute;
-    }
-    &.bar {
-        position: absolute;
-        top: 0;
-        right: 0;
-        width: @scroll-width;
+    display: block;
+    overflow: auto;
+    visibility: hidden;
 
-        .thumb {
+    > .area {
+        position: relative;
+        overflow: auto;
+        visibility: visible;
+        z-index: @scroll-z-index;
+    }
+
+    & + .bar {
+        background: #999;
+        position: relative;
+        float: left;
+        width: @scroll-width;
+        left: -@scroll-width;
+        margin-left: -@scroll-width;
+        z-index: @scroll-z-index + 1;
+
+        > .thumb {
+            background: #800;
             position: absolute;
             top: 0;
             right: 0;

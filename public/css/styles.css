@@ -1,3 +1,3 @@
-.scroll.area{display:block;overflow:hidden;position:absolute}.scroll.bar{position:absolute;top:0;right:0;width:8px}.scroll.bar .thumb{position:absolute;top:0;right:0;width:8px;height:8px}
+.scroll{display:block;overflow:auto;visibility:hidden}.scroll>.area{position:relative;overflow:auto;visibility:visible;z-index:1}.scroll+.bar{background:#999;position:relative;float:left;width:8px;left:-8px;margin-left:-8px;z-index:2}.scroll+.bar>.thumb{background:#800;position:absolute;top:0;right:0;width:8px;height:8px}
 
-/*  scroll.js v0.1.0, 2014.12.09  */
+/*  scroll.js v0.1.0, 2014.12.10  */
