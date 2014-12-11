@@ -98,8 +98,17 @@
             getID: function (data) {
                 return dataset(data.area, prefix('id'));
             },
+
+            _percentage: function(total, part) {
+                return part / total * 100;
+            },
             moveThumb: function (data) {
-                data.thumb.style.top = data.wrap.scrollTop / data.wrap.scrollHeight * 100 + '%';
+                data.thumb.style.top = this._percentage(data.wrap.scrollHeight, data.wrap.scrollTop) + '%';
+            },
+            relativeScroll: function(data, e) {
+                var percentage = this._percentage(data.wrap.offsetHeight, e.offsetY);
+                data.thumb.style.top = percentage + '%';
+                data.wrap.scrollTop = data.wrap.scrollHeight * percentage / 100;
             },
             setEvents: function (data) {
                 var self = this;
@@ -107,6 +116,14 @@
                 // Wheel & Touch events
                 data.wrap.addEventListener('scroll', function onScroll() {
                     self.moveThumb(data);
+                });
+
+                data.bar.addEventListener('click', function(e) {
+                    if (e.target !== data.bar) {
+                        return;
+                    }
+
+                    self.relativeScroll(data, e);
                 });
 
                 // Observe changes in future
