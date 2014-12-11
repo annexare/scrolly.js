@@ -119,6 +119,10 @@
                 });
 
                 data.bar.addEventListener('click', function(e) {
+                    if (e.target !== data.bar) {
+                        return;
+                    }
+
                     self.relativeScroll(data, e);
                 });
 
