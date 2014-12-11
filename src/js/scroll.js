@@ -100,6 +100,9 @@
             },
             setEvents: function (data) {
                 // Wheel & Touch events
+                data.wrap.addEventListener('scroll', function onScroll(e) {
+                    data.thumb.style.top = data.wrap.scrollTop / data.wrap.scrollHeight * 100 + '%';
+                });
 
                 // Observe changes in future
                 var self = this;
