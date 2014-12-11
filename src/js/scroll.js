@@ -29,11 +29,11 @@
         },
 
         //hasTouch = ('ontouchstart' in document.documentElement),
-        eventName = ('onwheel' in document || document.documentMode >= 9)
-            ? 'wheel'
-            : (typeof document.onmousewheel === 'undefined'
-                ? 'DOMMouseScroll'
-                : 'mousewheel'),
+        //eventName = ('onwheel' in document || document.documentMode >= 9)
+        //    ? 'wheel'
+        //    : (typeof document.onmousewheel === 'undefined'
+        //        ? 'DOMMouseScroll'
+        //        : 'mousewheel'),
 
         scrollBars = [],
         scrolll = {
@@ -98,14 +98,18 @@
             getID: function (data) {
                 return dataset(data.area, prefix('id'));
             },
+            moveThumb: function (data) {
+                data.thumb.style.top = data.wrap.scrollTop / data.wrap.scrollHeight * 100 + '%';
+            },
             setEvents: function (data) {
+                var self = this;
+
                 // Wheel & Touch events
-                data.wrap.addEventListener('scroll', function onScroll(e) {
-                    data.thumb.style.top = data.wrap.scrollTop / data.wrap.scrollHeight * 100 + '%';
+                data.wrap.addEventListener('scroll', function onScroll() {
+                    self.moveThumb(data);
                 });
 
                 // Observe changes in future
-                var self = this;
                 data.observer = new MutationObserver(function (mutations) {
                     console.log(' > mutations', mutations.length);
                     self.update(self.getID(data));
@@ -135,6 +139,7 @@
                 }
 
                 this.setSize(data);
+                this.moveThumb(data);
 
                 if (withEvents) {
                     this.setEvents(data);

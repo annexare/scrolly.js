@@ -14,21 +14,26 @@
     }
 
     & + .bar {
-        background: #999;
+        background: rgba(33,33,33,.3);
         position: relative;
         float: left;
         width: @scroll-width;
-        left: -@scroll-width;
+        left: 0;
         margin-left: -@scroll-width;
+        opacity: .2;
         z-index: @scroll-z-index + 1;
 
         > .thumb {
             background: #800;
+            border-radius: (@scroll-width - 2) / 2;
             position: absolute;
             top: 0;
-            right: 0;
-            width: @scroll-width;
+            right: 1px;
+            width: @scroll-width - 2;
             height: @scroll-width;
         }
+    }
+    &:hover + .bar {
+        opacity: .8;
     }
 }
