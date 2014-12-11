@@ -6,14 +6,14 @@ var test = function (e) {
 
     var area = document.querySelector('article.test0');
     if (e.target.className === 'clear') {
-        area.innerText = '';
+        area.textContent = '';
         return;
     }
 
-    var words = document.querySelector('article.' + e.target.className).innerText.split(/\s/);
+    var words = document.querySelector('article.' + e.target.className).textContent.split(/\s/);
     words.forEach(function (w) {
         var span = document.createElement('span');
-        span.innerText = w + ' ';
+        span.textContent = w + ' ';
         //- setTimeout(function () {
             area.appendChild(span);
         //- }, 0);

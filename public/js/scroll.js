@@ -1,4 +1,4 @@
-/*  scroll.js v0.2.0, 2014.12.11  */
+/*  scroll.js v0.2.1, 2014.12.11  */
 
 var dataset = function initDataSet() {
     if (document.documentElement.dataset) {
@@ -148,11 +148,11 @@ var dataset = function initDataSet() {
                     areaSize = data.area.scrollHeight;
 
                 if (areaSize <= wrapSize) {
-                    data.bar.style.display = 'none';
+                    data.bar.style.visibility = 'hidden';
                     return;
                 }
 
-                data.bar.style.display = 'block';
+                data.bar.style.visibility = 'visible';
                 data.bar.style.height = wrapSize + 'px';
                 data.thumb.style.height = (wrapSize * (wrapSize / areaSize)) + 'px';
             },

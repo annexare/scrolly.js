@@ -124,11 +124,11 @@
                     areaSize = data.area.scrollHeight;
 
                 if (areaSize <= wrapSize) {
-                    data.bar.style.display = 'none';
+                    data.bar.style.visibility = 'hidden';
                     return;
                 }
 
-                data.bar.style.display = 'block';
+                data.bar.style.visibility = 'visible';
                 data.bar.style.height = wrapSize + 'px';
                 data.thumb.style.height = (wrapSize * (wrapSize / areaSize)) + 'px';
             },

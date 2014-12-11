@@ -15,12 +15,14 @@
 
     & + .bar {
         background: rgba(33,33,33,.3);
+        display: block;
         position: relative;
         float: left;
-        width: @scroll-width;
         left: 0;
         margin-left: -@scroll-width;
         opacity: .2;
+        width: @scroll-width;
+        visibility: hidden;
         z-index: @scroll-z-index + 1;
 
         > .thumb {
