@@ -82,6 +82,69 @@
                 ? 'DOMMouseScroll'
                 : 'mousewheel'),
 
+        // Events
+        onDone = function (data) {
+            document.body.onmousemove = document.body.onmouseup = null;
+            document.ontouchmove = document.ontouchend = null;
+
+            classRemove(this.noUserSelectClass, document.body);
+            classRemove(this.onDragClass, data.bar);
+        },
+        onBegin = function (data, e) {
+            var self = this,
+                start = getEventPos(data.axis, e),
+                delta = 0,
+                top = data.thumb.style.top.replace('px', '') * 1,
+                handler = function (e) {
+                    delta = getEventPos(data.axis, e) - start + (data.thumbSize / 2);
+                    if (hasTouch) {
+                        // Change direction for touch devices
+                        // TODO Check why it's so fast on iOS, check on other devices
+                        delta = delta * -0.5;
+                    }
+                    self.setThumbPos.call(self, data, top + delta, true);
+                },
+                done = function () {
+                    onDone.call(self, data);
+                };
+
+            classAdd(this.noUserSelectClass, document.body);
+            classAdd(this.onDragClass, data.bar);
+
+            if (hasTouch) {
+                document.ontouchmove = function (e) {
+                    e.preventDefault();
+                    handler(e.touches[0]);
+                };
+                document.ontouchend = done;
+            } else {
+                document.body.onmousemove = handler;
+                document.body.onmouseup = done;
+            }
+        },
+        onWheel = function (data, e) {
+            if (data.wrapRatio === 1) {
+                return;
+            }
+
+            var offset = (getNodePos(data.wrap, data.axis) + e['delta' + data.axis]);
+
+            data.wrapRatio = data.wrapSize / getNodeSize(data.area, data.axis);
+            if ((offset > 0) && (offset + data.wrapSize < getNodeSize(data.area, data.axis))) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+
+            data.wrap['scroll' + axesPos[data.axis]] += e['delta' + data.axis];
+            this.setThumbPos(data);
+
+            //var delta = e['delta' + data.axis],
+            //    top = window.getComputedStyle(data.area)
+            //        .getPropertyValue('top')
+            //        .replace('px', '');
+            //data.area.style.top = (top + delta) + 'px';
+        },
+
         scrollBars = [],
         scrolll = {
             // Common defaults for scope, can be changed for all next Bars
@@ -196,69 +259,6 @@
                 }
             },
 
-            // Events
-            onBegin: function (data, e) {
-                var self = this,
-                    start = getEventPos(data.axis, e),
-                    delta = 0,
-                    top = data.thumb.style.top.replace('px', '') * 1,
-                    handler = function (e) {
-                        delta = getEventPos(data.axis, e) - start + (data.thumbSize / 2);
-                        if (hasTouch) {
-                            // Change direction for touch devices
-                            // TODO Check why it's so fast on iOS, check on other devices
-                            delta = delta * -0.5;
-                        }
-                        self.setThumbPos.call(self, data, top + delta, true);
-                    },
-                    done = function () {
-                        self.onDone.call(self, data);
-                    };
-
-                classAdd(this.noUserSelectClass, document.body);
-                classAdd(this.onDragClass, data.bar);
-
-                if (hasTouch) {
-                    document.ontouchmove = function (e) {
-                        e.preventDefault();
-                        handler(e.touches[0]);
-                    };
-                    document.ontouchend = done;
-                } else {
-                    document.body.onmousemove = handler;
-                    document.body.onmouseup = done;
-                }
-            },
-            onDone: function (data) {
-                document.body.onmousemove = document.body.onmouseup = null;
-                document.ontouchmove = document.ontouchend = null;
-
-                classRemove(this.noUserSelectClass, document.body);
-                classRemove(this.onDragClass, data.bar);
-            },
-            onWheel: function (data, e) {
-                if (data.wrapRatio === 1) {
-                    return;
-                }
-
-                var offset = (getNodePos(data.wrap, data.axis) + e['delta' + data.axis]);
-
-                data.wrapRatio = data.wrapSize / getNodeSize(data.area, data.axis);
-                if ((offset > 0) && (offset + data.wrapSize < getNodeSize(data.area, data.axis))) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                }
-
-                data.wrap['scroll' + axesPos[data.axis]] += e['delta' + data.axis];
-                this.setThumbPos(data);
-
-                //var delta = e['delta' + data.axis],
-                //    top = window.getComputedStyle(data.area)
-                //        .getPropertyValue('top')
-                //        .replace('px', '');
-                //data.area.style.top = (top + delta) + 'px';
-            },
-
             // Setters
             // TODO Check when data.area size is changed, because wrapRatio recalculated every time now
             setEvents: function (data) {
@@ -276,7 +276,7 @@
 
                 // Wheel || Touch events
                 var handler = function (e) {
-                    self.onBegin.call(self, data, e);
+                    onBegin.call(self, data, e);
                 };
                 if (hasTouch) {
                     data.wrap.ontouchstart = function (e) {
@@ -291,7 +291,7 @@
                 } else {
                     // Wheel
                     data.wrap.addEventListener(wheelEventName, function (e) {
-                        self.onWheel.call(self, data, e);
+                        onWheel.call(self, data, e);
                     });
                     // Bar: Drag
                     data.bar.addEventListener('mousedown', handler);

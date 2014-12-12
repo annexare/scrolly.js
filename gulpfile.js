@@ -110,6 +110,7 @@ gulp.task('build', function () {
     ])
         .pipe(concat('scroll.js', { newLine: ';\n\n' }))
         .pipe(wrapper({ header: banner() }))
+        .pipe(gulp.dest(paths.js))
         .pipe(rename({suffix: '.min'}))
         .pipe(uglify())
         .pipe(wrapper({ header: banner() }))
@@ -138,7 +139,7 @@ gulp.task('vendor', function () {
  * Build, Watch & Default tasks.
  * Runs pre-build automatically on run.
  */
-gulp.task('build-all', ['clean', 'jshint', 'build', 'vendor', 'less', 'jade']);
+gulp.task('build-all', ['jshint', 'build', 'vendor', 'less', 'jade']);
 
 gulp.task('serve', ['build-all'], function() {
     var http = require('http'),
