@@ -18,7 +18,7 @@
 
         // Node helpers
         // classList is not supported by IE9
-        classAdd = function (className, node) {
+        addClass = function (className, node) {
             var list = (node.className || '').split(/\s+/);
             if (list.indexOf(className) === -1) {
                 list.push.apply(list, [className]);
@@ -26,7 +26,12 @@
 
             return (node.className = list.join(' '));
         },
-        classRemove = function (className, node) {
+        hasClass = function (className, node) {
+            var list = (node.className || '').split(/\s+/);
+
+            return (list.indexOf(className) !== -1);
+        },
+        removeClass = function (className, node) {
             var list = (node.className || '').split(/\s+/),
                 id = list.indexOf(className);
             if (id !== -1) {
@@ -42,11 +47,13 @@
             return node;
         },
         wrap = function (node, className) {
-            // TODO Check for existing wrapper
+            var parent = node.parentNode;
+            if (hasClass(className, parent)) {
+                return parent;
+            }
             var wrapper = div(className);
 
-            node.parentNode
-                .insertBefore(wrapper, node);
+            parent.insertBefore(wrapper, node);
             wrapper.appendChild(node);
 
             return wrapper;
@@ -87,8 +94,8 @@
             document.body.onmousemove = document.body.onmouseup = null;
             document.ontouchmove = document.ontouchend = null;
 
-            classRemove(this.noUserSelectClass, document.body);
-            classRemove(this.onDragClass, data.bar);
+            removeClass(this.noUserSelectClass, document.body);
+            removeClass(this.onDragClass, data.bar);
         },
         onBegin = function (data, e) {
             var self = this,
@@ -108,8 +115,8 @@
                     onDone.call(self, data);
                 };
 
-            classAdd(this.noUserSelectClass, document.body);
-            classAdd(this.onDragClass, data.bar);
+            addClass(this.noUserSelectClass, document.body);
+            addClass(this.onDragClass, data.bar);
 
             if (hasTouch) {
                 document.ontouchmove = function (e) {
@@ -184,7 +191,7 @@
                     data.thumbMinSize = opts.thumbMinSize || this.thumbMinSize;
 
                     // Area
-                    classAdd('area', node);
+                    addClass('area', node);
                     data.wrap = wrap(node, 'scroll');
                     data.area = node;
 
@@ -223,7 +230,7 @@
                 // Unwatch
                 data.observer.disconnect();
                 // Cleanup
-                classRemove('area', data.area);
+                removeClass('area', data.area);
                 data.area.removeAttribute('data-' + prefix('id'));
                 data.wrap.parentNode.insertBefore(data.area, data.wrap);
                 data.wrap.parentNode.removeChild(data.wrap);
