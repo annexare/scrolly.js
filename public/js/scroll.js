@@ -190,49 +190,57 @@ var dataset = function initDataSet() {
                     return false;
                 }
 
-                var $query = $(query),
-                    ids = [];
+                var $query = typeof query === 'string'
+                        ? document.querySelectorAll(query)
+                        : query;
                 if (!$query.length) {
-                    console.log(message('Couldn\'t query:'), query, params);
+                    if ($query instanceof HTMLElement) {
+                        return [this.barNode($query, params)];
+                    }
+                    console.log(message('Couldn\'t query:'), typeof query, query, params);
                     return false;
                 }
 
-                $query.forEach(function (node) {
-                    if (typeof dataset(node, prefix('id')) !== 'undefined') {
-                        this.dispose(dataset(node, prefix('id')));
-                    }
-
-                    var opts = params || {},
-                        data = {
-                            params: opts,
-                            scrolled: 0,
-                            visible: false
-                        };
-
-                    // Params
-                    data.axis = opts.axis || this.axis;
-                    data.thumbMinSize = opts.thumbMinSize || this.thumbMinSize;
-
-                    // Area
-                    addClass('area', node);
-                    data.wrap = wrap(node, 'scroll');
-                    data.area = node;
-
-                    // Bar
-                    // TODO Check for existing Bar
-                    var bar = div('bar');
-                    data.thumb = bar.appendChild(div('thumb'));
-                    data.bar = data.wrap.parentNode
-                        .insertBefore(bar, data.wrap.nextSibling);
-
-                    // Store Data
-                    var id = dataset(node, prefix('id'), scrollBars.push(data) - 1);
-                    ids.push(id);
-
-                    this.update(id, true);
-                }, this);
+                var ids = [];
+                for (var i = 0; i < $query.length; i++) {
+                    ids.push(this.barNode($query[i], params));
+                }
 
                 return ids;
+            },
+            barNode: function (node, params) {
+                if (typeof dataset(node, prefix('id')) !== 'undefined') {
+                    this.dispose(dataset(node, prefix('id')));
+                }
+
+                var opts = params || {},
+                    data = {
+                        params: opts,
+                        scrolled: 0,
+                        visible: false
+                    };
+
+                // Params
+                data.axis = opts.axis || this.axis;
+                data.thumbMinSize = opts.thumbMinSize || this.thumbMinSize;
+
+                // Area
+                addClass('area', node);
+                data.wrap = wrap(node, 'scroll');
+                data.area = node;
+
+                // Bar
+                // TODO Check for existing Bar
+                var bar = div('bar');
+                data.thumb = bar.appendChild(div('thumb'));
+                data.bar = data.wrap.parentNode
+                    .insertBefore(bar, data.wrap.nextSibling);
+
+                // Store Data
+                var id = dataset(node, prefix('id'), scrollBars.push(data) - 1);
+                this.update(id, true);
+
+                return id;
             },
             /**
              * Dispose Scroll from node. Remove all extra elements, unwrap.
