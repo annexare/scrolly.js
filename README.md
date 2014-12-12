@@ -18,6 +18,11 @@ data:       LESS:
 
 * `data.wrapRatio`: float `0..1`. Calculated as `wrapSize / areaSize`. When ` === 1` no scrollbar is shown.
 
+### Planned
+
+* Infinite Scroll callback
+* React.js Component
+
 ### Setup
 
 1. Clone this repo.
