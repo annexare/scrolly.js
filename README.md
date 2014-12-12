@@ -16,7 +16,6 @@ data:       LESS:
 ### Data: numbers
 
 * `data.wrapRatio`: float `0..1`. Calculated as `wrapSize / areaSize`. When ` === 1` no scrollbar is shown.
-* `data.thumbRatio`: float `0..1`. Calculated as `(wrapSize - thumbHeight) / wrapSize`. When ` === 1` no scrollbar is shown.
 
 ### Setup
 

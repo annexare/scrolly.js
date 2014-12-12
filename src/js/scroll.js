@@ -138,21 +138,24 @@
             dispose: function (id) {
                 var no = (typeof id === 'number') ? id : false;
 
-                if ((no === false) || (!scrollBars[no])) {
+                if (no === false) {
                     return false;
                 }
 
                 var data = scrollBars[no];
-                if (typeof data === 'undefined') {
+                if (!data || (typeof data === 'undefined')) {
                     return true;
                 }
                 // Unwatch
                 data.observer.disconnect();
                 // Cleanup
                 classRemove('area', data.area);
+                data.area.removeAttribute('data-' + prefix('id'));
                 data.wrap.parentNode.insertBefore(data.area, data.wrap);
                 data.wrap.parentNode.removeChild(data.wrap);
                 data.bar.parentNode.removeChild(data.bar);
+                // Well, we won't change all IDs to remove it
+                scrollBars[no] = false;
 
                 return true;
             },

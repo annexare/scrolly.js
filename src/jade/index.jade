@@ -26,6 +26,8 @@ html
             button#setLarge.test1 Large
             =' - '
             button#setSmall.clear Clear Text
+            =' - '
+            button#setSmall.dispose Dispose One
 
         article.test0
 
@@ -55,7 +57,7 @@ html
             scrolll.bar('article');
             window.s = scrollBars[1];
 
-            var test = function (e) {
+            var action = function (e) {
                 /*$('article.test0').html(
                     $('article.' + e.target.className).html()
                 );*/
@@ -63,6 +65,9 @@ html
                 var area = document.querySelector('article.test0');
                 if (e.target.className === 'clear') {
                     area.textContent = '';
+                    return;
+                } else if (e.target.className === 'dispose') {
+                    scrolll.dispose(1);
                     return;
                 }
 
@@ -75,7 +80,7 @@ html
                     //- }, 0);
                 });
             }
-            $('button').on('click', test);
+            $('button').on('click', action);
 
         script.
             if (window.location.hostname === 'localhost') {
