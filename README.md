@@ -5,7 +5,7 @@ At the moment `MutationObserver` requires IE11, but works in all major desktop &
 
 ## Usage
 
-```
+```js
 // Initialize
 var ids = scrl.bar(query|node|string, params);
 // or
