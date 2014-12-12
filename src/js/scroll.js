@@ -201,7 +201,6 @@
 
             // Events
             onBegin: function (data, e) {
-                console.log(' > onBegin', e);
                 var self = this,
                     start = getEventPos(data.axis, e),
                     delta = 0,
