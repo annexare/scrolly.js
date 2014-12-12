@@ -50,6 +50,7 @@
             cursor: default;
             .no-user-select;
         }
+        &.on-drag,
         &:hover {
             margin-left: -@scroll-bar-width-hover;
             width: @scroll-bar-width-hover;
@@ -61,6 +62,7 @@
         }
     }
     &:hover + .bar,
+    & + .bar.on-drag,
     & + .bar:hover {
         opacity: .8;
     }

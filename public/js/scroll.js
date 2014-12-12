@@ -44,23 +44,10 @@ var dataset = function initDataSet() {
             return title + ': ' + text;
         },
 
-        axes = {
-            X: 'Width',
-            Y: 'Height'
-        },
-        axesPos = {
-            X: 'Left',
-            Y: 'Top'
-        },
-        calcThumbPos = function (data) {
-            var offset = data.wrap['scroll' + axesPos[data.axis]] || 0;
-            return Math.floor(
-                (offset + data.wrapSize / 2) * data.wrapRatio
-            );
-        },
+        // Node helpers
         // classList is not supported by IE9
         classAdd = function (className, node) {
-            var list = node.className.split(/\s+/);
+            var list = (node.className || '').split(/\s+/);
             if (list.indexOf(className) === -1) {
                 list.push.apply(list, [className]);
             }
@@ -68,7 +55,7 @@ var dataset = function initDataSet() {
             return (node.className = list.join(' '));
         },
         classRemove = function (className, node) {
-            var list = node.className.split(/\s+/),
+            var list = (node.className || '').split(/\s+/),
                 id = list.indexOf(className);
             if (id !== -1) {
                 list.splice(id, 1);
@@ -92,6 +79,30 @@ var dataset = function initDataSet() {
             return wrapper;
         },
 
+        // Position & size helpers
+        axes = { X: 'Width', Y: 'Height'},
+        axesPos = { X: 'Left', Y: 'Top'},
+        getEventPos = function (axis, e) {
+            return e['page' + axis] || e['client' + axis];
+        },
+        getNodePos = function (node, axis, prefix) {
+            return node[(prefix || 'scroll') + axesPos[axis]];
+        },
+        getNodeSize = function (node, axis, prefix) {
+            return node[(prefix || 'scroll') + axes[axis]];
+        },
+
+        //
+        calcThumbPos = function (data) {
+            var offset = getNodePos(data.wrap, data.axis) || 0;
+            return Math.floor(
+                (offset + data.wrapSize / 2) * data.wrapRatio
+            );
+        },
+        px = function (value) {
+            return value + 'px';
+        },
+
         hasTouch = ('ontouchstart' in document.documentElement),
         wheelEventName = ('onwheel' in document || document.documentMode >= 9)
             ? 'wheel'
@@ -101,11 +112,13 @@ var dataset = function initDataSet() {
 
         scrollBars = [],
         scrolll = {
-            // Common defaults for scope
+            // Common defaults for scope, can be changed for all next Bars
             axis: 'Y',
+            onDragClass: 'on-drag',
             noUserSelectClass: 'no-user-select',
             thumbMinSize: 24,
 
+            // Public methods
             bar: function (query, params) {
                 if (!query) {
                     console.log(message('No Query specified.'));
@@ -149,6 +162,7 @@ var dataset = function initDataSet() {
                     // Store Data
                     var id = dataset(node, prefix('id'), scrollBars.push(data) - 1);
                     ids.push(id);
+
                     this.update(id, true);
                 }, this);
 
@@ -183,32 +197,117 @@ var dataset = function initDataSet() {
 
                 return true;
             },
+            /**
+             * Get scroll ID by current data object.
+             * @param data
+             * @returns {*}
+             */
             getID: function (data) {
                 return dataset(data.area, prefix('id'));
             },
-            onDrag: function (data, e) {
-                //
+            /**
+             * Update data for certain scroll.
+             * @param id
+             * @param withEvents
+             */
+            update: function (id, withEvents) {
+                var data = scrollBars[id];
+                if (typeof data === 'undefined') {
+                    return;
+                }
+
+                this.setSize(data);
+
+                if (withEvents) {
+                    this.setEvents(data);
+                }
+            },
+
+            // Events
+            onBegin: function (data, e) {
+                console.log(' > onBegin', e);
+                var self = this,
+                    start = getEventPos(data.axis, e),
+                    delta = 0,
+                    top = data.thumb.style.top.replace('px', '') * 1,
+                    handler = function(e) {
+                        delta = getEventPos(data.axis, e) - start + (data.thumbSize / 2);
+                        self.setThumbPos.call(self, data, top + delta, true);
+                    },
+                    done = function() {
+                        self.onDone.call(self, data);
+                    };
+
+                classAdd(this.noUserSelectClass, document.body);
+                classAdd(this.onDragClass, data.bar);
+
+                if (hasTouch) {
+                    document.ontouchmove = function(e) {
+                        e.preventDefault();
+                        handler(e.touches[0]);
+                    };
+                    document.ontouchend = done;
+                } else {
+                    document.body.onmousemove = handler;
+                    document.body.onmouseup = done;
+                }
             },
             onDone: function (data) {
-                //
+                document.body.onmousemove = document.body.onmouseup = null;
+                document.ontouchmove = document.ontouchend = null;
+
+                classRemove(this.noUserSelectClass, document.body);
+                classRemove(this.onDragClass, data.bar);
             },
-            onMove: function (data, e) {
-                //
-                console.log(' > onMove', e);
+            onWheel: function (data, e) {
+                if (data.wrapRatio === 1) {
+                    return;
+                }
+
+                var param = 'scroll' + axesPos[data.axis],
+                    offset = (data.wrap[param] + e['delta' + data.axis]);
+
+                data.wrapRatio = data.wrapSize / getNodeSize(data.area, data.axis);
+                if ((offset > 0) && (offset + data.wrapSize < getNodeSize(data.area, data.axis))) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+
+                data.wrap[param] += e['delta' + data.axis];
+                this.setThumbPos(data);
+
+                //var delta = e['delta' + data.axis],
+                //    top = window.getComputedStyle(data.area)
+                //        .getPropertyValue('top')
+                //        .replace('px', '');
+                //data.area.style.top = (top + delta) + 'px';
             },
-            onWheel: function (data) {
-                //
-            },
+
+            // Setters
             setEventData: function (e, data) {
                 var param = ['page' + data.axis];
                 data[param] = e[param];
 
                 return data;
             },
+            // TODO Check when data.area size is changed, because wrapRatio recalculated every time now
             setEvents: function (data) {
                 var self = this;
 
+                // Observe changes in future
+                data.observer = new MutationObserver(function (mutations) {
+                    console.log(' > mutations for ' + data.area.className, mutations.length);
+                    self.update(self.getID(data));
+                });
+                data.observer.observe(data.area, {
+                    attributes: true,
+                    childList: true
+                });
+
                 // Wheel || Touch events
+                var handler = function (e) {
+                    self.onBegin.call(self, data, e);
+                };
                 if (hasTouch) {
                     data.wrap.ontouchstart = function (e) {
                         if (e.touches.length !== 1) {
@@ -217,34 +316,15 @@ var dataset = function initDataSet() {
                         e.preventDefault();
                         e.stopPropagation();
 
-                        var event = e.touches[0];
-                        self.setEventData(event, data);
-                        self.onMove.call(self, data, event);
+                        handler(e.touches[0]);
                     };
                 } else {
                     // Wheel
                     data.wrap.addEventListener(wheelEventName, function (e) {
-                        if (data.wrapRatio === 1) {
-                            return;
-                        }
-
-                        var param = 'scroll' + axesPos[data.axis],
-                            offset = (data.wrap[param] += e['delta' + data.axis]);
-
-                        if ((offset > 0) && (offset + data.wrapSize < data.areaSize)) {
-                            e.preventDefault();
-                            e.stopPropagation();
-                        }
-
-                        data.wrap[param] += e['delta' + data.axis];
-                        self.setThumbPos(data);
-
-                        //var delta = e['delta' + data.axis],
-                        //    top = window.getComputedStyle(data.area)
-                        //        .getPropertyValue('top')
-                        //        .replace('px', '');
-                        //data.area.style.top = (top + delta) + 'px';
+                        self.onWheel.call(self, data, e);
                     });
+                    // Bar: Drag
+                    data.bar.addEventListener('mousedown', handler);
                 }
 
                 // Bar, common
@@ -257,17 +337,6 @@ var dataset = function initDataSet() {
                 data.bar.addEventListener('click', function(e) {
                     var dot = e['layer' + data.axis];
                     self.setThumbPos.call(self, data, dot, true);
-                    console.log('click', dot);
-                });
-
-                // Observe changes in future
-                data.observer = new MutationObserver(function (mutations) {
-                    console.log(' > mutations for ' + data.area.className, mutations.length);
-                    self.update(self.getID(data));
-                });
-                data.observer.observe(data.area, {
-                    attributes: true,
-                    childList: true
                 });
             },
             /**
@@ -276,9 +345,9 @@ var dataset = function initDataSet() {
              * @param data
              */
             setSize: function (data) {
-                var axis = axes[data.axis],
-                    wrapSize = data.wrapSize = data.wrap['offset' + axis],
-                    areaSize = data.areaSize = data.area['scroll' + axis];
+                var wrapSize = data.wrapSize = getNodeSize(data.wrap, data.axis, 'offset'),
+                    // Not caching, in some case there's a shift
+                    areaSize = getNodeSize(data.area, data.axis);
 
                 // Lesser area - no bar
                 data.visible = (areaSize > wrapSize);
@@ -294,11 +363,11 @@ var dataset = function initDataSet() {
                             Math.max(data.thumbMinSize, wrapSize * wrapRatio)
                         );
 
-                data.thumb.style.height = thumbSize + 'px';
-                data.thumbSize = data.thumb['offset' + axis];
+                data.thumb.style.height = px(thumbSize);
+                data.thumbSize = getNodeSize(data.thumb, data.axis, 'offset');
                 this.setThumbPos(data);
 
-                data.bar.style.height = wrapSize + 'px';
+                data.bar.style.height = px(wrapSize);
                 data.bar.style.visibility = 'visible';
             },
             setThumbPos: function (data, value, doScroll) {
@@ -312,25 +381,14 @@ var dataset = function initDataSet() {
                         : dot - gap);
 
                 thumbPos = thumbPos > thumbPosMax ? thumbPosMax : thumbPos;
-                data.thumb.style[axesPos[data.axis].toLowerCase()] = thumbPos + 'px';
+                data.thumb.style[axesPos[data.axis].toLowerCase()] = px(thumbPos);
                 if (doScroll) {
                     this.setWrapScroll(data, thumbPos);
                 }
             },
             setWrapScroll: function (data, dot) {
-                data.wrap['scroll' + axesPos[data.axis]] = Math.floor(dot / data.wrapSize * data.areaSize);
-            },
-            update: function (id, withEvents) {
-                var data = scrollBars[id];
-                if (typeof data === 'undefined') {
-                    return;
-                }
-
-                this.setSize(data);
-
-                if (withEvents) {
-                    this.setEvents(data);
-                }
+                data.wrap['scroll' + axesPos[data.axis]] =
+                    Math.floor(dot / data.wrapSize * getNodeSize(data.area, data.axis));
             }
         };
 
