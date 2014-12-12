@@ -1,6 +1,6 @@
 {
     "name": "scroll.js",
-    "version": "0.2.1",
+    "version": "0.3.0",
     "description": "Scroll.js",
     "keywords": [],
     "repository": {
@@ -16,6 +16,7 @@
         "gulp-jshint": "*",
         "gulp-less": "*",
         "gulp-livereload": "*",
+        "gulp-rename": "*",
         "gulp-uglify": "*",
         "gulp-wrapper": "*",
         "del": "*",

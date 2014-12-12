@@ -2,6 +2,21 @@
 
 Scrollbar plugin (not yet) on vanilla JS. Aim is a fast + good looking scrollbar with zero dependencies, small size &amp; major browsers support.
 
+## Details
+
+### Data: DOM elements
+```
+data:       LESS:
+  wrap      .scroll
+  area        .area
+  bar         .area + .bar
+  thumb         .thumb
+```
+
+### Data: numbers
+
+* `data.wrapRatio`: float `0..1`. Calculated as `wrapSize / areaSize`. When ` === 1` no scrollbar is shown.
+
 ### Setup
 
 1. Clone this repo.
