@@ -180,6 +180,7 @@ var dataset = function initDataSet() {
             // Common defaults for scope, can be changed for all next Bars
             axis: 'Y',
             onDragClass: 'on-drag',
+            onResize: false,
             noUserSelectClass: 'no-user-select',
             thumbMinSize: 24,
 
@@ -211,6 +212,13 @@ var dataset = function initDataSet() {
             barNode: function (node, params) {
                 if (typeof dataset(node, prefix('id')) !== 'undefined') {
                     this.dispose(dataset(node, prefix('id')));
+                }
+                // Window Resize
+                if (!this.onResize) {
+                    window.addEventListener(
+                        'resize',
+                        this.updateAll.bind(this),
+                        true);
                 }
 
                 var opts = params || {},
@@ -286,7 +294,7 @@ var dataset = function initDataSet() {
              */
             update: function (id, withEvents) {
                 var data = scrollBars[id];
-                if (typeof data === 'undefined') {
+                if (!data) {
                     return;
                 }
 
@@ -294,6 +302,11 @@ var dataset = function initDataSet() {
 
                 if (withEvents) {
                     this.setEvents(data);
+                }
+            },
+            updateAll: function () {
+                for (var i = 0; i < scrollBars.length; i++) {
+                    this.update(i);
                 }
             },
 
