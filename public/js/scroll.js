@@ -92,7 +92,6 @@ var dataset = function initDataSet() {
             return node[(prefix || 'scroll') + axes[axis]];
         },
 
-        //
         calcThumbPos = function (data) {
             var offset = getNodePos(data.wrap, data.axis) || 0;
             return Math.floor(
@@ -229,7 +228,7 @@ var dataset = function initDataSet() {
                     start = getEventPos(data.axis, e),
                     delta = 0,
                     top = data.thumb.style.top.replace('px', '') * 1,
-                    handler = function(e) {
+                    handler = function (e) {
                         delta = getEventPos(data.axis, e) - start + (data.thumbSize / 2);
                         if (hasTouch) {
                             // Change direction for touch devices
@@ -238,7 +237,7 @@ var dataset = function initDataSet() {
                         }
                         self.setThumbPos.call(self, data, top + delta, true);
                     },
-                    done = function() {
+                    done = function () {
                         self.onDone.call(self, data);
                     };
 
@@ -246,7 +245,7 @@ var dataset = function initDataSet() {
                 classAdd(this.onDragClass, data.bar);
 
                 if (hasTouch) {
-                    document.ontouchmove = function(e) {
+                    document.ontouchmove = function (e) {
                         e.preventDefault();
                         handler(e.touches[0]);
                     };
@@ -325,13 +324,13 @@ var dataset = function initDataSet() {
                 }
 
                 // Bar, common
-                data.thumb.addEventListener('click', function(e) {
+                data.thumb.addEventListener('click', function (e) {
                     if (e) {
                         e.preventDefault();
                         e.stopPropagation();
                     }
                 });
-                data.bar.addEventListener('click', function(e) {
+                data.bar.addEventListener('click', function (e) {
                     var dot = e['layer' + data.axis];
                     self.setThumbPos.call(self, data, dot, true);
                 });
@@ -380,12 +379,10 @@ var dataset = function initDataSet() {
                 thumbPos = thumbPos > thumbPosMax ? thumbPosMax : thumbPos;
                 data.thumb.style[axesPos[data.axis].toLowerCase()] = px(thumbPos);
                 if (doScroll) {
-                    this.setWrapScroll(data, thumbPos);
+                    thumbPos = (thumbPos === thumbPosMax ? data.wrapSize : thumbPos);
+                    data.wrap['scroll' + axesPos[data.axis]] =
+                        Math.floor(thumbPos / data.wrapSize * getNodeSize(data.area, data.axis));
                 }
-            },
-            setWrapScroll: function (data, dot) {
-                data.wrap['scroll' + axesPos[data.axis]] =
-                    Math.floor(dot / data.wrapSize * getNodeSize(data.area, data.axis));
             }
         };
 
