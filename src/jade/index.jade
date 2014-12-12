@@ -1,8 +1,8 @@
 - var app = {};
 - app.name = 'Scroll.js';
-- app.title = app.name + ': fast scroll bars on vanilla JS';
+- app.title = app.name + ': fast vanilla JS scrollbar plugin';
 - app.description = app.title + '.';
-- app.keywords = 'scroll,js,scrollbar';
+- app.keywords = 'scroll,scrollbar,amd,js,vanilla';
 
 doctype html
 html
@@ -11,7 +11,7 @@ html
         title= app.title
         meta(name='description', content=app.description)
         meta(name='keywords', content=app.keywords)
-        link(rel='stylesheet', href='/css/styles.css')
+        link(rel='stylesheet', href='/css/styles-scroll.css')
         link(rel='stylesheet', href='/css/styles-example.css')
 
         <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
@@ -57,10 +57,10 @@ html
         script(src='/js/vendor.js')
         script(src='/js/scroll.js')
         script.
-            scrolll.bar('article.query');
-            var node = document.querySelector('article.test2');
-            scrolll.bar(node);
-            window.s = scrollBars[1];
+            // Send Query
+            scrl.bar('article.query');
+            // Send element
+            scrl.bar(document.querySelector('article.test2'));
 
             var action = function (e) {
                 /*$('article.test0').html(
@@ -72,7 +72,7 @@ html
                     area.textContent = '';
                     return;
                 } else if (e.target.className === 'dispose') {
-                    scrolll.dispose(1);
+                    scrl.dispose(1);
                     return;
                 }
 

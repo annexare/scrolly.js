@@ -1,4 +1,4 @@
-/*  scroll.js v0.3.0, 2014.12.12  */
+/*  scroll.js v0.3.1, 2014.12.12  */
 var dataset = function initDataSet() {
     if (document.documentElement.dataset) {
         return function native(el, prop, value) {
@@ -175,8 +175,8 @@ var dataset = function initDataSet() {
             //data.area.style.top = (top + delta) + 'px';
         },
 
-        scrollBars = [],
-        scrolll = {
+        scrls = [],
+        scrl = {
             // Common defaults for scope, can be changed for all next Bars
             axis: 'Y',
             onDragClass: 'on-drag',
@@ -245,7 +245,7 @@ var dataset = function initDataSet() {
                     .insertBefore(bar, data.wrap.nextSibling);
 
                 // Store Data
-                var id = dataset(node, prefix('id'), scrollBars.push(data) - 1);
+                var id = dataset(node, prefix('id'), scrls.push(data) - 1);
                 this.update(id, true);
 
                 return id;
@@ -262,7 +262,7 @@ var dataset = function initDataSet() {
                     return false;
                 }
 
-                var data = scrollBars[no];
+                var data = scrls[no];
                 if (!data || (typeof data === 'undefined')) {
                     return true;
                 }
@@ -275,9 +275,14 @@ var dataset = function initDataSet() {
                 data.wrap.parentNode.removeChild(data.wrap);
                 data.bar.parentNode.removeChild(data.bar);
                 // Well, we won't change all IDs to remove it
-                scrollBars[no] = false;
+                scrls[no] = false;
 
                 return true;
+            },
+            disposeAll: function () {
+                for (var i = 0; i < scrls.length; i++) {
+                    this.dispose(i);
+                }
             },
             /**
              * Get scroll ID by current data object.
@@ -293,7 +298,7 @@ var dataset = function initDataSet() {
              * @param withEvents
              */
             update: function (id, withEvents) {
-                var data = scrollBars[id];
+                var data = scrls[id];
                 if (!data) {
                     return;
                 }
@@ -305,7 +310,7 @@ var dataset = function initDataSet() {
                 }
             },
             updateAll: function () {
-                for (var i = 0; i < scrollBars.length; i++) {
+                for (var i = 0; i < scrls.length; i++) {
                     this.update(i);
                 }
             },
@@ -412,14 +417,14 @@ var dataset = function initDataSet() {
         };
 
     if (typeof module !== 'undefined' && module.exports) {
-        module.exports = scrolll;
+        module.exports = scrl;
     } else if (typeof define !== 'undefined' && define.amd) {
         define([], function () {
-            return scrolll;
+            return scrl;
         });
     } else {
-        this.scrolll = scrolll;
-        this.scrollBars = scrollBars;
+        this.scrl = scrl;
+        this.scrls = scrls;
     }
 
 }.call(this));

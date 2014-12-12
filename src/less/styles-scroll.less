@@ -1,11 +1,4 @@
-// TODO Separate LESS vars with styles
-
-@scroll-bar-padding: 2px;
-@scroll-bar-hover-x: 1.5;
-@scroll-bar-width: 12px;
-@scroll-bar-width-hover: @scroll-bar-width * @scroll-bar-hover-x;
-
-@scroll-z-index: 1;
+@import "variables.less";
 
 .no-user-select {
     user-select: none;
@@ -26,13 +19,13 @@
     }
 
     & + .bar {
-        background: rgba(33,33,33,.3);
+        background: @scroll-bar-bg;
         display: block;
         position: relative;
         float: left;
         left: 0;
         margin-left: -@scroll-bar-width;
-        opacity: .2;
+        opacity: @scroll-bar-opacity;
         width: @scroll-bar-width;
         visibility: hidden;
         z-index: @scroll-z-index + 1;
@@ -42,7 +35,7 @@
             top: 0;
             right: @scroll-bar-padding;
 
-            background: #800;
+            background: @scroll-bar-thumb;
             border-radius: @scroll-bar-width / 2 - @scroll-bar-padding;
             width: @scroll-bar-width - (@scroll-bar-padding * 2);
             height: @scroll-bar-width;
@@ -54,6 +47,7 @@
         }
         &.on-drag,
         &:hover {
+            opacity: @scroll-bar-opacity-active;
             margin-left: -@scroll-bar-width-hover;
             width: @scroll-bar-width-hover;
 
@@ -66,6 +60,6 @@
     &:hover + .bar,
     & + .bar.on-drag,
     & + .bar:hover {
-        opacity: .8;
+        background: @scroll-bar-bg-active;
     }
 }

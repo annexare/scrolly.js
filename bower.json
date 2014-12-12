@@ -1,11 +1,29 @@
 {
     "name": "scroll.js",
-    "version": "0.3.0",
-    "description": "Scroll.js",
-    "keywords": [],
+    "version": "0.3.1",
+    "description": "Scroll.js: fast vanilla JS scrollbar plugin.",
+    "keywords": [
+        "scroll", "scrollbar",
+        "js", "javascript", "vanilla", "amd"
+    ],
     "dependencies": {
     },
     "devDependencies": {
         "jbone": "*"
+    },
+    "ignore": [
+        ".gitignore",
+        "node_modules",
+        "vendor"
+    ],
+    "main": "public/js/scroll.js",
+    "moduleType": [
+        "amd",
+        "globals"
+    ],
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/annexare/toURI"
     }
 }
