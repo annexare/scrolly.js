@@ -20,6 +20,7 @@
 
     & + .bar {
         background: @scroll-bar-bg;
+        border: 0;
         display: block;
         position: relative;
         float: left;
@@ -47,8 +48,9 @@
         }
         &.on-drag,
         &:hover {
+            border-left: 1px solid @scroll-bar-active-border;
             opacity: @scroll-bar-opacity-active;
-            margin-left: -@scroll-bar-width-hover;
+            margin-left: -(@scroll-bar-width-hover + 1);
             width: @scroll-bar-width-hover;
 
             > .thumb {
