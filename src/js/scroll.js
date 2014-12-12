@@ -1,12 +1,5 @@
 /**
  * Scroll.js
- *
- * A bit of math & links inside each scroll data.
- * DOM elements:
- * - wrap
- *  - area <- this element is
- *  - bar
- *   - thumb
  */
 
 ;(function () {

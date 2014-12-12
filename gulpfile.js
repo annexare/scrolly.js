@@ -5,6 +5,7 @@ var gulp = require('gulp'),
     less = require('gulp-less'),
     livereload = require('gulp-livereload'),
     autoprefixer = require('gulp-autoprefixer'),
+    rename = require('gulp-rename'),
     uglify = require('gulp-uglify'),
     wrapper = require('gulp-wrapper'),
 
@@ -108,7 +109,10 @@ gulp.task('build', function () {
         src.js
     ])
         .pipe(concat('scroll.js', { newLine: ';\n\n' }))
-        .pipe(wrapper({ header: banner() + '\n' }))
+        .pipe(wrapper({ header: banner() }))
+        .pipe(rename({suffix: '.min'}))
+        .pipe(uglify())
+        .pipe(wrapper({ header: banner() }))
         .pipe(gulp.dest(paths.js));
 });
 

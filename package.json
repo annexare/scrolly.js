@@ -16,6 +16,7 @@
         "gulp-jshint": "*",
         "gulp-less": "*",
         "gulp-livereload": "*",
+        "gulp-rename": "*",
         "gulp-uglify": "*",
         "gulp-wrapper": "*",
         "del": "*",
