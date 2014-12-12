@@ -1,4 +1,4 @@
-/*  scroll.js v0.2.1, 2014.12.11  */
+/*  scroll.js v0.3.0, 2014.12.12  */
 
 var dataset = function initDataSet() {
     if (document.documentElement.dataset) {
@@ -22,8 +22,15 @@ var dataset = function initDataSet() {
 }();
 ;
 
-/*
+/**
  * Scroll.js
+ *
+ * A bit of math & links inside each scroll data.
+ * DOM elements:
+ * - wrap
+ *  - area <- this element is
+ *  - bar
+ *   - thumb
  */
 
 ;(function () {
@@ -35,6 +42,39 @@ var dataset = function initDataSet() {
         },
         message = function (text) {
             return title + ': ' + text;
+        },
+
+        axes = {
+            X: 'Width',
+            Y: 'Height'
+        },
+        axesPos = {
+            X: 'Left',
+            Y: 'Top'
+        },
+        calcThumbPos = function (data) {
+            var offset = data.wrap['scroll' + axesPos[data.axis]] || 0;
+            return Math.floor(
+                (offset + data.wrapSize / 2) * data.wrapRatio
+            );
+        },
+        // classList is not supported by IE9
+        classAdd = function (className, node) {
+            var list = node.className.split(/\s+/);
+            if (list.indexOf(className) === -1) {
+                list.push.apply(list, [className]);
+            }
+
+            return (node.className = list.join(' '));
+        },
+        classRemove = function (className, node) {
+            var list = node.className.split(/\s+/),
+                id = list.indexOf(className);
+            if (id !== -1) {
+                list.splice(id, 1);
+            }
+
+            return (node.className = list.join(' '));
         },
         div = function (className) {
             var node = document.createElement('div');
@@ -52,22 +92,27 @@ var dataset = function initDataSet() {
             return wrapper;
         },
 
-        //hasTouch = ('ontouchstart' in document.documentElement),
-        //eventName = ('onwheel' in document || document.documentMode >= 9)
-        //    ? 'wheel'
-        //    : (typeof document.onmousewheel === 'undefined'
-        //        ? 'DOMMouseScroll'
-        //        : 'mousewheel'),
+        hasTouch = ('ontouchstart' in document.documentElement),
+        wheelEventName = ('onwheel' in document || document.documentMode >= 9)
+            ? 'wheel'
+            : (typeof document.onmousewheel === 'undefined'
+                ? 'DOMMouseScroll'
+                : 'mousewheel'),
 
         scrollBars = [],
         scrolll = {
+            // Common defaults for scope
+            axis: 'Y',
+            noUserSelectClass: 'no-user-select',
+            thumbMinSize: 24,
+
             bar: function (query, params) {
                 if (!query) {
                     console.log(message('No Query specified.'));
                     return false;
                 }
 
-                var $query = typeof query === 'string' ? $(query) : $(query),
+                var $query = $(query),
                     ids = [];
                 if (!$query.length) {
                     console.log(message('Couldn\'t query:'), query, params);
@@ -79,14 +124,19 @@ var dataset = function initDataSet() {
                         this.dispose(dataset(node, prefix('id')));
                     }
 
-                    var data = {
-                            params: params || {}
-                        },
-                        classes = node.className.split(' ');
+                    var opts = params || {},
+                        data = {
+                            params: opts,
+                            scrolled: 0,
+                            visible: false
+                        };
 
-                    // Area; classList is not supported by IE9
-                    classes.push.apply(classes, [/*'scroll', */'area']);
-                    node.className = classes.join(' ');
+                    // Params
+                    data.axis = opts.axis || this.axis;
+                    data.thumbMinSize = opts.thumbMinSize || this.thumbMinSize;
+
+                    // Area
+                    classAdd('area', node);
                     data.wrap = wrap(node, 'scroll');
                     data.area = node;
 
@@ -104,6 +154,11 @@ var dataset = function initDataSet() {
 
                 return ids;
             },
+            /**
+             * Dispose Scroll from node. Remove all extra elements, unwrap.
+             * @param id
+             * @returns {boolean}
+             */
             dispose: function (id) {
                 var no = (typeof id === 'number') ? id : false;
 
@@ -115,27 +170,96 @@ var dataset = function initDataSet() {
                 if (typeof data === 'undefined') {
                     return true;
                 }
+                // Unwatch
                 data.observer.disconnect();
+                // Cleanup
+                classRemove('area', data.area);
+                data.wrap.parentNode.insertBefore(data.area, data.wrap);
+                data.wrap.parentNode.removeChild(data.wrap);
+                data.bar.parentNode.removeChild(data.bar);
 
                 return true;
             },
             getID: function (data) {
                 return dataset(data.area, prefix('id'));
             },
-            moveThumb: function (data) {
-                data.thumb.style.top = data.wrap.scrollTop / data.wrap.scrollHeight * 100 + '%';
+            onDrag: function (data, e) {
+                //
+            },
+            onDone: function (data) {
+                //
+            },
+            onMove: function (data, e) {
+                //
+                console.log(' > onMove', e);
+            },
+            onWheel: function (data) {
+                //
+            },
+            setEventData: function (e, data) {
+                var param = ['page' + data.axis];
+                data[param] = e[param];
+
+                return data;
             },
             setEvents: function (data) {
                 var self = this;
 
-                // Wheel & Touch events
-                data.wrap.addEventListener('scroll', function onScroll() {
-                    self.moveThumb(data);
+                // Wheel || Touch events
+                if (hasTouch) {
+                    data.wrap.ontouchstart = function (e) {
+                        if (e.touches.length !== 1) {
+                            return;
+                        }
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        var event = e.touches[0];
+                        self.setEventData(event, data);
+                        self.onMove.call(self, data, event);
+                    };
+                } else {
+                    // Wheel
+                    data.wrap.addEventListener(wheelEventName, function (e) {
+                        if (data.wrapRatio === 1) {
+                            return;
+                        }
+
+                        var param = 'scroll' + axesPos[data.axis],
+                            offset = (data.wrap[param] += e['delta' + data.axis]);
+
+                        if ((offset > 0) && (offset + data.wrapSize < data.areaSize)) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                        }
+
+                        data.wrap[param] += e['delta' + data.axis];
+                        self.setThumbPos(data);
+
+                        //var delta = e['delta' + data.axis],
+                        //    top = window.getComputedStyle(data.area)
+                        //        .getPropertyValue('top')
+                        //        .replace('px', '');
+                        //data.area.style.top = (top + delta) + 'px';
+                    });
+                }
+
+                // Bar, common
+                data.thumb.addEventListener('click', function(e) {
+                    if (e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                    }
+                });
+                data.bar.addEventListener('click', function(e) {
+                    var dot = e['layer' + data.axis];
+                    self.setThumbPos.call(self, data, dot, true);
+                    console.log('click', dot);
                 });
 
                 // Observe changes in future
                 data.observer = new MutationObserver(function (mutations) {
-                    console.log(' > mutations', mutations.length);
+                    console.log(' > mutations for ' + data.area.className, mutations.length);
                     self.update(self.getID(data));
                 });
                 data.observer.observe(data.area, {
@@ -143,18 +267,55 @@ var dataset = function initDataSet() {
                     childList: true
                 });
             },
+            /**
+             * Recalculate sizes.
+             * Called only on init or changes (MutationObserver).
+             * @param data
+             */
             setSize: function (data) {
-                var wrapSize = data.wrap.offsetHeight,
-                    areaSize = data.area.scrollHeight;
+                var axis = axes[data.axis],
+                    wrapSize = data.wrapSize = data.wrap['offset' + axis],
+                    areaSize = data.areaSize = data.area['scroll' + axis];
 
-                if (areaSize <= wrapSize) {
+                // Lesser area - no bar
+                data.visible = (areaSize > wrapSize);
+                if (!data.visible) {
                     data.bar.style.visibility = 'hidden';
                     return;
                 }
 
-                data.bar.style.visibility = 'visible';
+                var wrapRatio = data.wrapRatio = wrapSize / areaSize,
+                    thumbSize = data.thumbSize =
+                        Math.min(
+                            wrapSize,
+                            Math.max(data.thumbMinSize, wrapSize * wrapRatio)
+                        );
+
+                data.thumb.style.height = thumbSize + 'px';
+                data.thumbSize = data.thumb['offset' + axis];
+                this.setThumbPos(data);
+
                 data.bar.style.height = wrapSize + 'px';
-                data.thumb.style.height = (wrapSize * (wrapSize / areaSize)) + 'px';
+                data.bar.style.visibility = 'visible';
+            },
+            setThumbPos: function (data, value, doScroll) {
+                var dot = typeof value === 'number'
+                        ? value
+                        : calcThumbPos(data),
+                    gap = data.thumbSize / 2,
+                    thumbPosMax = data.wrapSize - data.thumbSize,
+                    thumbPos = (dot < gap
+                        ? 0
+                        : dot - gap);
+
+                thumbPos = thumbPos > thumbPosMax ? thumbPosMax : thumbPos;
+                data.thumb.style[axesPos[data.axis].toLowerCase()] = thumbPos + 'px';
+                if (doScroll) {
+                    this.setWrapScroll(data, thumbPos);
+                }
+            },
+            setWrapScroll: function (data, dot) {
+                data.wrap['scroll' + axesPos[data.axis]] = Math.floor(dot / data.wrapSize * data.areaSize);
             },
             update: function (id, withEvents) {
                 var data = scrollBars[id];
@@ -163,7 +324,6 @@ var dataset = function initDataSet() {
                 }
 
                 this.setSize(data);
-                this.moveThumb(data);
 
                 if (withEvents) {
                     this.setEvents(data);

@@ -1,13 +1,23 @@
-@scroll-width: 8px;
+@scroll-bar-padding: 2px;
+@scroll-bar-hover-x: 1.5;
+@scroll-bar-width: 12px;
+@scroll-bar-width-hover: @scroll-bar-width * @scroll-bar-hover-x;
+
 @scroll-z-index: 1;
 
+.no-user-select {
+    user-select: none;
+}
 .scroll {
     display: block;
-    overflow: auto;
-    visibility: hidden;
+    overflow: hidden;
+    // Well, it was a nice hack
+    // visibility: hidden;
 
     > .area {
         position: relative;
+        top: 0;
+        display: block;
         overflow: auto;
         visibility: visible;
         z-index: @scroll-z-index;
@@ -19,23 +29,39 @@
         position: relative;
         float: left;
         left: 0;
-        margin-left: -@scroll-width;
+        margin-left: -@scroll-bar-width;
         opacity: .2;
-        width: @scroll-width;
+        width: @scroll-bar-width;
         visibility: hidden;
         z-index: @scroll-z-index + 1;
 
         > .thumb {
-            background: #800;
-            border-radius: (@scroll-width - 2) / 2;
             position: absolute;
             top: 0;
-            right: 1px;
-            width: @scroll-width - 2;
-            height: @scroll-width;
+            right: @scroll-bar-padding;
+
+            background: #800;
+            border-radius: @scroll-bar-width / 2 - @scroll-bar-padding;
+            width: @scroll-bar-width - (@scroll-bar-padding * 2);
+            height: @scroll-bar-width;
+        }
+
+        &, & > .thumb {
+            cursor: default;
+            .no-user-select;
+        }
+        &:hover {
+            margin-left: -@scroll-bar-width-hover;
+            width: @scroll-bar-width-hover;
+
+            > .thumb {
+                border-radius: @scroll-bar-width-hover / 2 - @scroll-bar-padding;
+                width: @scroll-bar-width-hover - (@scroll-bar-padding * 2);
+            }
         }
     }
-    &:hover + .bar {
+    &:hover + .bar,
+    & + .bar:hover {
         opacity: .8;
     }
 }
