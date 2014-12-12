@@ -1,6 +1,7 @@
-# Scroll.js
+# Scroll.js: fast vanilla JS scrollbar plugin
 
-Scrollbar plugin (not yet) on vanilla JS. Aim is a fast + good looking scrollbar with zero dependencies, small size &amp; major browsers support.
+Aim is a fast + good looking scrollbar with zero dependencies, small size &amp; major browsers support.
+At the moment `MutationObserver` requires IE11, but works in all major desktop &amp; mobile browsers.
 
 ## Details
 
