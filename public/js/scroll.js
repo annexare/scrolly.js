@@ -235,7 +235,6 @@ var dataset = function initDataSet() {
                             // Change direction for touch devices
                             // TODO Check why it's so fast on iOS, check on other devices
                             delta = delta * -0.5;
-                            console.log(e);
                         }
                         self.setThumbPos.call(self, data, top + delta, true);
                     },
