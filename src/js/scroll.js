@@ -1,5 +1,8 @@
 /**
  * Scroll.js
+ *
+ * @todo Prepare for React.js
+ * @todo Add more options: keep thumb pos on update, etc
  */
 
 ;(function () {
@@ -39,6 +42,7 @@
             return node;
         },
         wrap = function (node, className) {
+            // TODO Check for existing wrapper
             var wrapper = div(className);
 
             node.parentNode
@@ -122,6 +126,7 @@
                     data.area = node;
 
                     // Bar
+                    // TODO Check for existing Bar
                     var bar = div('bar');
                     data.thumb = bar.appendChild(div('thumb'));
                     data.bar = data.wrap.parentNode
