@@ -3,6 +3,20 @@
 Aim is a fast + good looking scrollbar with zero dependencies, small size &amp; major browsers support.
 At the moment `MutationObserver` requires IE11, but works in all major desktop &amp; mobile browsers.
 
+## Usage
+
+```
+// Initialize
+var ids = scrl.bar(query|node|string, params);
+// or
+var id = scrl.barNode(node, params);
+
+// Dispose
+scrl.dispose(id);
+// or cleanup everything
+scrl.disposeAll();
+```
+
 ## Details
 
 ### Data: DOM elements
