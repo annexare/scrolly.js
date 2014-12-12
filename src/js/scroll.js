@@ -201,7 +201,6 @@
 
             // Events
             onBegin: function (data, e) {
-                console.log(' > onBegin', e);
                 var self = this,
                     start = getEventPos(data.axis, e),
                     delta = 0,
@@ -240,8 +239,7 @@
                     return;
                 }
 
-                var param = 'scroll' + axesPos[data.axis],
-                    offset = (data.wrap[param] + e['delta' + data.axis]);
+                var offset = (getNodePos(data.wrap, data.axis) + e['delta' + data.axis]);
 
                 data.wrapRatio = data.wrapSize / getNodeSize(data.area, data.axis);
                 if ((offset > 0) && (offset + data.wrapSize < getNodeSize(data.area, data.axis))) {
@@ -249,7 +247,7 @@
                     e.stopPropagation();
                 }
 
-                data.wrap[param] += e['delta' + data.axis];
+                data.wrap['scroll' + axesPos[data.axis]] += e['delta' + data.axis];
                 this.setThumbPos(data);
 
                 //var delta = e['delta' + data.axis],
@@ -260,12 +258,6 @@
             },
 
             // Setters
-            setEventData: function (e, data) {
-                var param = ['page' + data.axis];
-                data[param] = e[param];
-
-                return data;
-            },
             // TODO Check when data.area size is changed, because wrapRatio recalculated every time now
             setEvents: function (data) {
                 var self = this;
