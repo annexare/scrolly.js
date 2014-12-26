@@ -1,5 +1,28 @@
+/*  scrolly v0.4.0, 2014.12.26  */
+var dataset = function initDataSet() {
+    if (document.documentElement.dataset) {
+        return function native(el, prop, value) {
+            if (typeof value !== 'undefined') {
+                return el.dataset[prop] = value;
+            } else {
+                return el.dataset[prop];
+            }
+        }
+    } else {
+        return function poly(el, prop, value) {
+            if (typeof value !== 'undefined') {
+                return el.setAttribute('data-' + prop, value);
+            }
+            else {
+                return el.getAttribute('data-' + prop);
+            }
+        }
+    }
+}();
+;
+
 /**
- * Scroll.js
+ * Scrolly.js
  *
  * @todo Prepare for React.js
  * @todo Add more options: keep thumb pos on update, etc
@@ -8,7 +31,7 @@
 ;(function () {
     'use strict';
 
-    var title = 'Scroll.js',
+    var title = 'Scrolly',
         prefix = function (param) {
             return 'scroll' + param;
         },
@@ -211,7 +234,7 @@
 
                 // Area
                 addClass('area', node);
-                data.wrap = wrap(node, 'scroll');
+                data.wrap = wrap(node, 'scrolly');
                 data.area = node;
 
                 // Bar
@@ -228,7 +251,7 @@
                 return id;
             },
             /**
-             * Dispose Scroll from node. Remove all extra elements, unwrap.
+             * Dispose Scrolly from node. Remove all extra elements, unwrap.
              * @param id
              * @returns {boolean}
              */
@@ -262,7 +285,7 @@
                 }
             },
             /**
-             * Get scroll ID by current data object.
+             * Get Scrolly ID by current data object.
              * @param data
              * @returns {*}
              */
@@ -270,7 +293,7 @@
                 return dataset(data.area, prefix('id'));
             },
             /**
-             * Update data for certain scroll.
+             * Update data for certain Scrolly.
              * @param id
              * @param withEvents
              */
@@ -400,8 +423,8 @@
             return scrl;
         });
     } else {
-        this.scrl = scrl;
-        this.scrls = scrls;
+        this.scrolly = scrl;
+        this.scrollyst = scrls;
     }
 
 }.call(this));

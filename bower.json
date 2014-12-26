@@ -1,9 +1,9 @@
 {
-    "name": "scroll.js",
-    "version": "0.3.1",
-    "description": "Scroll.js: fast vanilla JS scrollbar plugin.",
+    "name": "scrolly",
+    "version": "0.4.0",
+    "description": "Scrolly: fast vanilla JS scrollbar plugin.",
     "keywords": [
-        "scroll", "scrollbar",
+        "scroll", "scrollbar", "scrolly", "bar",
         "js", "javascript", "vanilla", "amd"
     ],
     "dependencies": {
@@ -16,7 +16,7 @@
         "node_modules",
         "vendor"
     ],
-    "main": "public/js/scroll.js",
+    "main": "public/js/scrolly.js",
     "moduleType": [
         "amd",
         "globals"

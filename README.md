@@ -1,4 +1,4 @@
-# Scroll.js: fast vanilla JS scrollbar plugin
+# Scrolly: fast vanilla JS scrollbar plugin
 
 Aim is a fast + good looking scrollbar with zero dependencies, small size &amp; major browsers support.
 At the moment `MutationObserver` requires IE11, but works in all major desktop &amp; mobile browsers.
@@ -7,14 +7,14 @@ At the moment `MutationObserver` requires IE11, but works in all major desktop &
 
 ```js
 // Initialize
-var ids = scrl.bar(query|node|string, params);
+var ids = scrolly.bar(query|node|string, params);
 // or
-var id = scrl.barNode(node, params);
+var id = scrolly.barNode(node, params);
 
 // Dispose
-scrl.dispose(id);
+scrolly.dispose(id);
 // or cleanup everything
-scrl.disposeAll();
+scrolly.disposeAll();
 ```
 
 ## Details
@@ -22,7 +22,7 @@ scrl.disposeAll();
 ### Data: DOM elements
 ```
 data:       LESS:
-  wrap      .scroll
+  wrap      .scrolly
   area        .area
   bar         .area + .bar
   thumb         .thumb

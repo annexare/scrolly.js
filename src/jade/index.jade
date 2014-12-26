@@ -1,8 +1,8 @@
 - var app = {};
-- app.name = 'Scroll.js';
+- app.name = 'Scrolly';
 - app.title = app.name + ': fast vanilla JS scrollbar plugin';
 - app.description = app.title + '.';
-- app.keywords = 'scroll,scrollbar,amd,js,vanilla';
+- app.keywords = 'scroll,scrollbar,scrolly,bar,amd,js,javascript,vanilla';
 
 doctype html
 html
@@ -11,7 +11,7 @@ html
         title= app.title
         meta(name='description', content=app.description)
         meta(name='keywords', content=app.keywords)
-        link(rel='stylesheet', href='/css/styles-scroll.css')
+        link(rel='stylesheet', href='/css/styles-scrolly.css')
         link(rel='stylesheet', href='/css/styles-example.css')
 
         <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
@@ -29,7 +29,7 @@ html
             =' - '
             button#setSmall.dispose Dispose One
             =' - '
-            a(href='https://github.com/z-ax/scroll.js') View on GitHub
+            a(href='https://github.com/annexare/scrolly.js.git') View on GitHub
 
         article.query.test0
 
@@ -42,7 +42,7 @@ html
             p EXTERMINATE! Hello sweetie! Galifrey Bow ties are cool DON'T BLINK! Bow ties are cool EXTERMINATE! Are you my mummy? Reverse the polarity of the positron flow Hello, Captain Jack Harkness.  the girl who waited Bow ties are cool Emperor of the Daleks Dalekanium Reverse the polarity of the neutron flow wibbly wobbly timey wimey the girl who waited I wear a fez now, fezzes are cool Hello sweetie! you are not alone in the universe Galifrey Silence will fall Demon's Run The Doctor puny human EXTERMINATE! Tick tock goes the clock... Galifrey Donna Noble has left the library. Donna Noble has been saved. MY VISION IS IMPAIRED! Allons-y Geronimo We are Dalek You will be exterminated! Fantastic! Hello sweetie The Silence is Coming! Reverse the polarity of the neutron flow Reverse the polarity of the positron flow The Doctor Emperor of the Daleks The Silence is Coming! the girl who waited Puny Human! RUN! Tick tock goes the clock... Amy Pond The Silence is Coming! We are Dalek River Song IT is the Doctor! Enemy of the Daleks! Donna Noble The angels have the phone box The angels have the phone box The Supreme Dalek The Silence is Coming! The Supreme Dalek Davros YOU WILL OBEY! I wear a fez now, fezzes are cool Geronimo! Bow ties are cool You will be exterminated! YOU WILL OBEY! wibbly wobbly timey wimey Would you like a jelly baby? wibbly wobbly timey wimey RUN! Fantastic! Reverse the polarity of the neutron flow Bow ties are cool We are Dalek It's bigger on the inside! Hello, Captain Jack Harkness.  Amy Pond Delete. Delete. Delete. Are you my mummy? puny human ninehundred  EXTERMINATE! The Doctor Bow ties are cool Bad Wolf Reverse the polarity of the neutron flow Time Lord Galifrey The Silence is Coming! You will be exterminated! IT is the Doctor! Enemy of the Daleks! The Supreme Dalek DON'T BLINK! Fantastic! I wear a fez now, fezzes are cool EXTERMINATE! The socks with holes, dummy! Bow ties are cool. Rose Tyler Puny Human! Bow ties are cool. Donna Noble has left the library. Donna Noble has been saved. Hello sweetie!
             p END.
 
-        .scroll
+        .scrolly
             article.test2
                 h1 Middle Article
                 p Reverse the polarity of the positron flow EXTERMINATE! Dalekanium Hello, Captain Jack Harkness.  Geronimo Time Lord Are you my mummy? Bow ties are cool K-9 wibbly-wobbly timey-wimey Reverse the polarity of the neutron flow Hey, who turned out the lights? Donna Noble has left the library. Donna Noble has been saved. Donna Noble has left the library. Donna Noble has been saved. Hello, Captain Jack Harkness.  Reverse the polarity of the positron flow the oncoming storm I am a Dalek Tick tock goes the clock... you are not alone in the universe Stormageddon, Dark Lord of All Bananas are good Stormageddon, Dark Lord of All Bow ties are cool. Reverse the polarity of the neutron flow EXTERMINATE! Stormageddon, Dark Lord of All Demon's Run Davros It's bigger on the inside! wibbly wobbly timey wimey Hello Sweetie. Bad Wolf  Demon's Run Davros Skaro Demon's Run EXTERMINATE! Puny Human! wibbly-wobbly timey-wimey Bad Wolf Bad Wolf you are not alone in the universe The Doctor IT is the Doctor! Enemy of the Daleks! The angels have the phone box puny human Silence will fall Bananas are good RUN! the girl who waited Rory the Roman Davros I really hate stairs. EXTERMINATE ALL STAIRCASES! EXTERMINATE! Hello, Captain Jack Harkness.  Would you like a jelly baby? The socks with holes, dummy! MY VISION IS IMPAIRED! Demon's Run I wear a fez now, fezzes are cool RUN! Would you like a jelly baby? Amy Pond The Master EXTERMINATE! Bad Wolf Bad Wolf Hey, who turned out the lights? EXTERMINATE! the girl who waited Are you my mummy? Would you like a jelly baby? Geronimo! Reverse the polarity of the neutron flow Hey, who turned out the lights? EXTERMINATE! Hello sweetie! Would you like a jelly baby? Delete. Delete. Delete. Hello sweetie! YOU WILL OBEY! The socks with holes, dummy! Stormageddon, Dark Lord of All The angels have the phone box Stormageddon, Dark Lord of All Geronimo wibbly wobbly timey wimey Emperor of the Daleks The Supreme Dalek Donna Noble wibbly-wobbly timey-wimey Cult of Skaro Hello sweetie! Hello Sweetie. Hello, Captain Jack Harkness. Silence will fall EXTERMINATE! The socks with holes, dummy! wibbly wobbly timey wimey Bow ties are cool.
@@ -55,12 +55,12 @@ html
             p END.
 
         script(src='/js/vendor.js')
-        script(src='/js/scroll.js')
+        script(src='/js/scrolly.js')
         script.
             // Send Query
-            scrl.bar('article.query');
+            scrolly.bar('article.query');
             // Send element
-            scrl.bar(document.querySelector('article.test2'));
+            scrolly.bar(document.querySelector('article.test2'));
 
             var action = function (e) {
                 /*$('article.test0').html(
@@ -72,7 +72,7 @@ html
                     area.textContent = '';
                     return;
                 } else if (e.target.className === 'dispose') {
-                    scrl.dispose(1);
+                    scrolly.dispose(1);
                     return;
                 }
 

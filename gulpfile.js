@@ -108,7 +108,7 @@ gulp.task('build', function () {
         vendor('dataset.js'),
         src.js
     ])
-        .pipe(concat('scroll.js', { newLine: ';\n\n' }))
+        .pipe(concat('scrolly.js', { newLine: ';\n\n' }))
         .pipe(wrapper({ header: banner() }))
         .pipe(gulp.dest(paths.js))
         .pipe(rename({suffix: '.min'}))

@@ -3,8 +3,8 @@
         "dataset": true,
         "define": true,
         "module": true,
-        "scrl": true,
-        "scrls": true
+        "scrolly": true,
+        "scrollyst": true
     },
     "node": true,
     "browser": true,
