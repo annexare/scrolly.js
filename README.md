@@ -3,6 +3,11 @@
 Aim is a fast + good looking scrollbar with zero dependencies, small size &amp; major browsers support.
 At the moment `MutationObserver` requires IE11, but works in all major desktop &amp; mobile browsers.
 
+## Install, via Bower or NPM
+
+* `bower install scrolly`
+* `npm install scrolly`
+
 ## Usage
 
 ```js
