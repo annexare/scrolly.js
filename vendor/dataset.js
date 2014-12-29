@@ -1,4 +1,4 @@
-var dataset = function initDataSet() {
+var dataSet = function initDataSet() {
     if (document.documentElement.dataset) {
         return function native(el, prop, value) {
             if (typeof value !== 'undefined') {

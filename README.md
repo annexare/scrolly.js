@@ -22,6 +22,17 @@ scrolly.dispose(id);
 scrolly.disposeAll();
 ```
 
+### jQuery/Zepto/jBone Plugin flavour
+
+```js
+// jQuery Plugin
+$('.selector').scrolly();
+// ...and it's chained as well
+
+// Dispose
+$('.selector').scrolly({ dispose: true });
+```
+
 ## Details
 
 ### Data: DOM elements

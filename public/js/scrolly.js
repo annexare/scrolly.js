@@ -1,5 +1,5 @@
 /*  scrolly v0.4.0, 2014.12.29  */
-var dataset = function initDataSet() {
+var dataSet = function initDataSet() {
     if (document.documentElement.dataset) {
         return function native(el, prop, value) {
             if (typeof value !== 'undefined') {
@@ -32,8 +32,8 @@ var dataset = function initDataSet() {
     'use strict';
 
     var title = 'Scrolly',
-        prefix = function (param) {
-            return 'scroll' + param;
+        dataPrefix = function (param) {
+            return 'scrolly' + param;
         },
         message = function (text) {
             return title + ': ' + text;
@@ -210,8 +210,8 @@ var dataset = function initDataSet() {
                 return ids;
             },
             barNode: function (node, params) {
-                if (typeof dataset(node, prefix('id')) !== 'undefined') {
-                    this.dispose(dataset(node, prefix('id')));
+                if (typeof dataSet(node, dataPrefix('id')) !== 'undefined') {
+                    this.dispose(dataSet(node, dataPrefix('id')));
                 }
                 // Window Resize
                 if (!this.onResize) {
@@ -245,7 +245,7 @@ var dataset = function initDataSet() {
                     .insertBefore(bar, data.wrap.nextSibling);
 
                 // Store Data
-                var id = dataset(node, prefix('id'), scrls.push(data) - 1);
+                var id = dataSet(node, dataPrefix('id'), scrls.push(data) - 1);
                 this.update(id, true);
 
                 return id;
@@ -256,9 +256,9 @@ var dataset = function initDataSet() {
              * @returns {boolean}
              */
             dispose: function (id) {
-                var no = (typeof id === 'number') ? id : false;
+                var no = id ? parseInt(id) : false;
 
-                if (no === false) {
+                if (typeof no !== 'number') {
                     return false;
                 }
 
@@ -270,7 +270,7 @@ var dataset = function initDataSet() {
                 data.observer.disconnect();
                 // Cleanup
                 removeClass('area', data.area);
-                data.area.removeAttribute('data-' + prefix('id'));
+                data.area.removeAttribute('data-' + dataPrefix('id'));
                 data.wrap.parentNode.insertBefore(data.area, data.wrap);
                 data.wrap.parentNode.removeChild(data.wrap);
                 data.bar.parentNode.removeChild(data.bar);
@@ -290,7 +290,7 @@ var dataset = function initDataSet() {
              * @returns {*}
              */
             getID: function (data) {
-                return dataset(data.area, prefix('id'));
+                return dataSet(data.area, dataPrefix('id'));
             },
             /**
              * Update data for certain Scrolly.
@@ -321,8 +321,8 @@ var dataset = function initDataSet() {
                 var self = this;
 
                 // Observe changes in future
-                data.observer = new MutationObserver(function (mutations) {
-                    console.log(' > mutations for ' + data.area.className, mutations.length);
+                data.observer = new MutationObserver(function (/*mutations*/) {
+                    // console.log(' > mutations for ' + data.area.className, mutations.length);
                     self.update(self.getID(data));
                 });
                 data.observer.observe(data.area, {
@@ -430,8 +430,16 @@ var dataset = function initDataSet() {
         var $ = this.$ || this.jQuery || this.Zepto || this.jBone;
         if ($ && $.fn) {
             $.fn.scrolly = function(params) {
-                var ids = scrl.bar(this, params);
-                console.log(' >', this, ids);
+                var p = params || {};
+                if (p.dispose) {
+                    if (this.length) {
+                        this.forEach(function (el) {
+                            scrl.dispose(dataSet(el, dataPrefix('id')));
+                        });
+                    }
+                } else {
+                    scrl.bar(this, p);
+                }
                 return this;
             };
         }

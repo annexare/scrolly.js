@@ -61,7 +61,7 @@ html
             p END.
 
         article.jquery.test5
-            h1 $.fn: Small Article
+            h1 $.fn: Small Article, after Disposal
             p Reverse the polarity of the positron flow EXTERMINATE! Dalekanium Hello, Captain Jack Harkness.  Geronimo Time Lord Are you my mummy? Bow ties are cool K-9 wibbly-wobbly timey-wimey Reverse the polarity of the neutron flow Hey, who turned out the lights? Donna Noble has left the library. Donna Noble has been saved. Donna Noble has left the library. Donna Noble has been saved. Hello, Captain Jack Harkness.  Reverse the polarity of the positron flow the oncoming storm I am a Dalek Tick tock goes the clock... you are not alone in the universe Stormageddon, Dark Lord of All Bananas are good Stormageddon, Dark Lord of All Bow ties are cool. Reverse the polarity of the neutron flow EXTERMINATE! Stormageddon, Dark Lord of All Demon's Run Davros It's bigger on the inside! wibbly wobbly timey wimey Hello Sweetie.
             p END.
 
@@ -73,7 +73,12 @@ html
             // Send element
             scrolly.bar(document.querySelector('article.test2'));
             // jQuery Plugin
-            $('.jquery').scrolly();
+            var attrName = 'jQueryPlugin';
+            $('.jquery').scrolly()
+                .attr(attrName, true);
+            // jQuery Plugin: Off last one
+            $('.jquery.test5').scrolly({ dispose: true })
+                .removeAttr(attrName);
 
             var action = function (e) {
                 /*$('article.test0').html(
