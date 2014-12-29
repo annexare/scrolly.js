@@ -246,7 +246,9 @@ var dataSet = function initDataSet() {
 
                 // Store Data
                 var id = dataSet(node, dataPrefix('id'), scrls.push(data) - 1);
-                this.update(id, true);
+                data.t = setTimeout(function () {
+                    scrl.update(id, true);
+                }, 0);
 
                 return id;
             },
@@ -258,7 +260,7 @@ var dataSet = function initDataSet() {
             dispose: function (id) {
                 var no = (
                     typeof id === 'string'
-                    ? parseInt(id)
+                    ? parseInt(id, 10)
                     : (typeof id === 'number' ? id : false)
                 );
 
@@ -270,8 +272,15 @@ var dataSet = function initDataSet() {
                 if (!data || (typeof data === 'undefined')) {
                     return true;
                 }
+                // First update() Timeout
+                if (data.t) {
+                    clearTimeout(data.t);
+                    delete data.t;
+                }
                 // Unwatch
-                data.observer.disconnect();
+                if (data.observer) {
+                    data.observer.disconnect();
+                }
                 // Cleanup
                 removeClass('area', data.area);
                 data.area.removeAttribute('data-' + dataPrefix('id'));
@@ -435,10 +444,15 @@ var dataSet = function initDataSet() {
         if ($ && $.fn) {
             $.fn.scrolly = function(params) {
                 var p = params || {};
-                if (p.dispose) {
+                if (p.dispose || p.update) {
                     if (this.length) {
                         this.forEach(function (el) {
-                            scrl.dispose(dataSet(el, dataPrefix('id')));
+                            var id = dataSet(el, dataPrefix('id'));
+                            if (p.dispose) {
+                                scrl.dispose(id);
+                            } else if (p.update) {
+                                scrl.update(id);
+                            }
                         });
                     }
                 } else {
