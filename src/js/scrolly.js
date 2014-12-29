@@ -233,9 +233,13 @@
              * @returns {boolean}
              */
             dispose: function (id) {
-                var no = id ? parseInt(id) : false;
+                var no = (
+                    typeof id === 'string'
+                    ? parseInt(id)
+                    : (typeof id === 'number' ? id : false)
+                );
 
-                if (typeof no !== 'number') {
+                if (no === false) {
                     return false;
                 }
 
