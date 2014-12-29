@@ -14,7 +14,7 @@ So, the **Browser Support** is same as for [`MutationObserver`](https://develope
 * Nested scrollbars
 * Touch support
 * jQuery/Zepto/jBone plugin
-* *React.js plugin (soon)*
+* *React.js Component (soon)*
 * *Infinite scroll callbacks (soon)*
 
 ```js
@@ -66,11 +66,6 @@ data:       LESS:
 ### Data: numbers
 
 * `data.wrapRatio`: float `0..1`. Calculated as `wrapSize / areaSize`. When ` === 1` no scrollbar is shown.
-
-### Planned
-
-* Infinite Scroll callback
-* React.js Component
 
 ### Setup
 
