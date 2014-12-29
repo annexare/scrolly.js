@@ -402,6 +402,16 @@
     } else {
         this.scrolly = scrl;
         this.scrollyst = scrls;
+
+        // jQuery Plugin
+        var $ = this.$ || this.jQuery || this.Zepto || this.jBone;
+        if ($ && $.fn) {
+            $.fn.scrolly = function(params) {
+                var ids = scrl.bar(this, params);
+                console.log(' >', this, ids);
+                return this;
+            };
+        }
     }
 
 }.call(this));

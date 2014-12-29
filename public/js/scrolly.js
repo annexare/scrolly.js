@@ -1,4 +1,4 @@
-/*  scrolly v0.4.0, 2014.12.26  */
+/*  scrolly v0.4.0, 2014.12.29  */
 var dataset = function initDataSet() {
     if (document.documentElement.dataset) {
         return function native(el, prop, value) {
@@ -425,6 +425,16 @@ var dataset = function initDataSet() {
     } else {
         this.scrolly = scrl;
         this.scrollyst = scrls;
+
+        // jQuery Plugin
+        var $ = this.$ || this.jQuery || this.Zepto || this.jBone;
+        if ($ && $.fn) {
+            $.fn.scrolly = function(params) {
+                var ids = scrl.bar(this, params);
+                console.log(' >', this, ids);
+                return this;
+            };
+        }
     }
 
 }.call(this));
