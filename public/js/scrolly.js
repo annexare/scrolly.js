@@ -1,4 +1,4 @@
-/*  scrolly v0.4.0, 2014.12.29  */
+/*  scrolly v0.4.1, 2014.12.29  */
 var dataSet = function initDataSet() {
     if (document.documentElement.dataset) {
         return function native(el, prop, value) {
