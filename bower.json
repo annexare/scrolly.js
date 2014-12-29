@@ -4,7 +4,8 @@
     "description": "Scrolly: fast vanilla JS scrollbar plugin.",
     "keywords": [
         "scroll", "scrollbar", "scrolly", "bar",
-        "js", "javascript", "vanilla", "amd"
+        "js", "javascript", "vanilla", "amd",
+        "jquery", "zepto", "jbone"
     ],
     "dependencies": {
     },

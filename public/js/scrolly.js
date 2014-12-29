@@ -1,5 +1,5 @@
-/*  scrolly v0.4.0, 2014.12.26  */
-var dataset = function initDataSet() {
+/*  scrolly v0.4.0, 2014.12.29  */
+var dataSet = function initDataSet() {
     if (document.documentElement.dataset) {
         return function native(el, prop, value) {
             if (typeof value !== 'undefined') {
@@ -32,8 +32,8 @@ var dataset = function initDataSet() {
     'use strict';
 
     var title = 'Scrolly',
-        prefix = function (param) {
-            return 'scroll' + param;
+        dataPrefix = function (param) {
+            return 'scrolly' + param;
         },
         message = function (text) {
             return title + ': ' + text;
@@ -210,8 +210,8 @@ var dataset = function initDataSet() {
                 return ids;
             },
             barNode: function (node, params) {
-                if (typeof dataset(node, prefix('id')) !== 'undefined') {
-                    this.dispose(dataset(node, prefix('id')));
+                if (typeof dataSet(node, dataPrefix('id')) !== 'undefined') {
+                    this.dispose(dataSet(node, dataPrefix('id')));
                 }
                 // Window Resize
                 if (!this.onResize) {
@@ -245,8 +245,10 @@ var dataset = function initDataSet() {
                     .insertBefore(bar, data.wrap.nextSibling);
 
                 // Store Data
-                var id = dataset(node, prefix('id'), scrls.push(data) - 1);
-                this.update(id, true);
+                var id = dataSet(node, dataPrefix('id'), scrls.push(data) - 1);
+                data.t = setTimeout(function () {
+                    scrl.update(id, true);
+                }, 0);
 
                 return id;
             },
@@ -256,7 +258,11 @@ var dataset = function initDataSet() {
              * @returns {boolean}
              */
             dispose: function (id) {
-                var no = (typeof id === 'number') ? id : false;
+                var no = (
+                    typeof id === 'string'
+                    ? parseInt(id, 10)
+                    : (typeof id === 'number' ? id : false)
+                );
 
                 if (no === false) {
                     return false;
@@ -266,11 +272,18 @@ var dataset = function initDataSet() {
                 if (!data || (typeof data === 'undefined')) {
                     return true;
                 }
+                // First update() Timeout
+                if (data.t) {
+                    clearTimeout(data.t);
+                    delete data.t;
+                }
                 // Unwatch
-                data.observer.disconnect();
+                if (data.observer) {
+                    data.observer.disconnect();
+                }
                 // Cleanup
                 removeClass('area', data.area);
-                data.area.removeAttribute('data-' + prefix('id'));
+                data.area.removeAttribute('data-' + dataPrefix('id'));
                 data.wrap.parentNode.insertBefore(data.area, data.wrap);
                 data.wrap.parentNode.removeChild(data.wrap);
                 data.bar.parentNode.removeChild(data.bar);
@@ -290,7 +303,7 @@ var dataset = function initDataSet() {
              * @returns {*}
              */
             getID: function (data) {
-                return dataset(data.area, prefix('id'));
+                return dataSet(data.area, dataPrefix('id'));
             },
             /**
              * Update data for certain Scrolly.
@@ -321,8 +334,8 @@ var dataset = function initDataSet() {
                 var self = this;
 
                 // Observe changes in future
-                data.observer = new MutationObserver(function (mutations) {
-                    console.log(' > mutations for ' + data.area.className, mutations.length);
+                data.observer = new MutationObserver(function (/*mutations*/) {
+                    // console.log(' > mutations for ' + data.area.className, mutations.length);
                     self.update(self.getID(data));
                 });
                 data.observer.observe(data.area, {
@@ -425,6 +438,29 @@ var dataset = function initDataSet() {
     } else {
         this.scrolly = scrl;
         this.scrollyst = scrls;
+
+        // jQuery Plugin
+        var $ = this.$ || this.jQuery || this.Zepto || this.jBone;
+        if ($ && $.fn) {
+            $.fn.scrolly = function(params) {
+                var p = params || {};
+                if (p.dispose || p.update) {
+                    if (this.length) {
+                        this.forEach(function (el) {
+                            var id = dataSet(el, dataPrefix('id'));
+                            if (p.dispose) {
+                                scrl.dispose(id);
+                            } else if (p.update) {
+                                scrl.update(id);
+                            }
+                        });
+                    }
+                } else {
+                    scrl.bar(this, p);
+                }
+                return this;
+            };
+        }
     }
 
 }.call(this));

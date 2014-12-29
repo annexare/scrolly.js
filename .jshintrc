@@ -1,6 +1,6 @@
 {
     "globals": {
-        "dataset": true,
+        "dataSet": true,
         "define": true,
         "module": true,
         "scrolly": true,

@@ -16,10 +16,29 @@ var ids = scrolly.bar(query|node|string, params);
 // or
 var id = scrolly.barNode(node, params);
 
+// Update
+scrolly.update(id);
+// or update everything
+scrolly.updateAll();
+
 // Dispose
 scrolly.dispose(id);
 // or cleanup everything
 scrolly.disposeAll();
+```
+
+### jQuery/Zepto/jBone Plugin flavour
+
+```js
+// jQuery Plugin
+$('.selector').scrolly();
+// ...and it's chained as well
+
+// Update
+$('.selector').scrolly({ update: true });
+
+// Dispose
+$('.selector').scrolly({ dispose: true });
 ```
 
 ## Details
