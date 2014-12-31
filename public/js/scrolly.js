@@ -1,4 +1,4 @@
-/*  scrolly v0.4.2, 2014.12.31  */
+/*  scrolly v0.4.3, 2014.12.31  */
 var dataSet = function initDataSet() {
     if (document.documentElement.dataset) {
         return function native(el, prop, value) {
@@ -26,14 +26,12 @@ var dataSet = function initDataSet() {
  */
 
 ;(function (factory) {
-    var jQ = $ || jQuery || Zepto || jBone;
-
     if (typeof module !== 'undefined' && module.exports) {
-        factory.call(module.exports, jQ);
+        factory.call(module.exports);
     } else if (typeof define === 'function' && define.amd) {
         define(['jquery'], factory);
     } else {
-        factory.call(window, jQ);
+        factory.call(window, window.$ || window.jQuery || window.Zepto || window.jBone);
     }
 }(function ($) {
     'use strict';
@@ -245,11 +243,25 @@ var dataSet = function initDataSet() {
                 data.area = node;
 
                 // Bar
-                // TODO Check for existing Bar
-                var bar = div('bar');
-                data.thumb = bar.appendChild(div('thumb'));
-                data.bar = data.wrap.parentNode
-                    .insertBefore(bar, data.wrap.nextSibling);
+                var barClassName = 'bar',
+                    thumbClassName = 'thumb';
+                if (hasClass(barClassName, data.wrap.nextSibling)) {
+                    // Bar exists
+                    data.bar = data.wrap.nextSibling;
+
+                    if (hasClass(thumbClassName, data.bar.firstChild)) {
+                        // Thumb exists
+                        data.thumb = data.bar.firstChild;
+                    } else {
+                        data.bar.innerHTML = '';
+                        data.thumb = data.bar.appendChild(div(thumbClassName));
+                    }
+                } else {
+                    var bar = div(barClassName);
+                    data.thumb = bar.appendChild(div(thumbClassName));
+                    data.bar = data.wrap.parentNode
+                        .insertBefore(bar, data.wrap.nextSibling);
+                }
 
                 // Store Data
                 var id = dataSet(node, dataPrefix('id'), scrls.push(data) - 1);

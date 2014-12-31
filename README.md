@@ -14,7 +14,7 @@ So, the **Browser Support** is same as for [`MutationObserver`](https://develope
 * Nested scrollbars
 * Touch support
 * jQuery/Zepto/jBone plugin
-* *React.js Component (soon)*
+* React.js Component
 * *Infinite scroll callbacks (soon)*
 
 ```js
@@ -32,6 +32,17 @@ scrolly.updateAll();
 scrolly.dispose(id);
 // or cleanup everything
 scrolly.disposeAll();
+```
+
+### React Component
+
+See example usage via `gulp watch` and [localhost:3001/react](http://localhost:3001/react/). Or just look at `public/react/index.html` in this repo.
+
+```jsx
+<Scrolly params={ params }>
+    <h1>Some test contents here</h1>
+    <p>Contents to be scrolled...</p>
+</Scrolly>
 ```
 
 ### jQuery/Zepto/jBone Plugin flavour

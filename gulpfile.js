@@ -6,6 +6,7 @@ var gulp = require('gulp'),
     livereload = require('gulp-livereload'),
     autoprefixer = require('gulp-autoprefixer'),
     plumber = require('gulp-plumber'),
+    react = require('gulp-react'),
     rename = require('gulp-rename'),
     uglify = require('gulp-uglify'),
     wrapper = require('gulp-wrapper'),
@@ -41,8 +42,9 @@ var bwr = JSON.parse(fs.readFileSync('./.bowerrc')),// standard require() doesn'
         server: dist
     },
     src = {
-        jade: sources + 'jade/*.jade',
+        jade: sources + 'jade/{,*/}index.jade',
         js: sources + 'js/*.js',
+        jsx: sources + 'jsx/*.jsx',
         less: sources + 'less/styles*.less'
     },
     pkg = require('./package.json'),
@@ -88,6 +90,30 @@ gulp.task('jshint', function () {
     return gulp.src(src.js)
         .pipe(jshint())
         .pipe(jshint.reporter('jshint-stylish'))
+});
+
+/*
+ * React JSX preprocessor
+ */
+gulp.task('jsx', function () {
+    return gulp.src([
+        vendor('dataset.js'),
+        src.js,
+        src.jsx
+    ])
+        .pipe(plumber())
+        .pipe(concat('react-scrolly.js', {newLine: '\n\n'}))
+        .pipe(react())
+        .on('error', function (e) {
+            console.error(e.message + '\n  in ' + e.fileName);
+        })
+        .pipe(wrapper({ header: banner() }))
+        .pipe(gulp.dest(paths.js))
+        // Production/Minified
+        .pipe(rename({suffix: '.min'}))
+        .pipe(uglify())
+        .pipe(wrapper({ header: banner() }))
+        .pipe(gulp.dest(paths.js));
 });
 
 /*
@@ -139,13 +165,22 @@ gulp.task('vendor', function () {
         }))
         .pipe(gulp.dest(paths.js));
 });
+/*
+ * Vendor: React.
+ */
+gulp.task('vendor-react', function () {
+    return gulp.src([
+        vendor('react/react.js')
+    ])
+        .pipe(gulp.dest(paths.js));
+});
 
 
 /*
  * Build, Watch & Default tasks.
  * Runs pre-build automatically on run.
  */
-gulp.task('build-all', ['jshint', 'build', 'vendor', 'less', 'jade']);
+gulp.task('build-all', ['jshint', 'build', 'vendor', 'vendor-react', 'jsx', 'less', 'jade']);
 
 gulp.task('serve', ['build-all'], function() {
     var http = require('http'),
@@ -164,6 +199,7 @@ gulp.task('serve', ['build-all'], function() {
 gulp.task('watch', ['serve'], function () {
     gulp.watch(src.jade, ['jade']);
     gulp.watch(src.js, ['jshint', 'build']);
+    gulp.watch(src.jsx, ['jsx']);
     gulp.watch(src.less, ['less']);
 
     gulp.watch(paths.server + masks.all).on('change', livereload.changed);

@@ -1,3 +1,26 @@
+/*  scrolly v0.4.3, 2014.12.31  */
+var dataSet = function initDataSet() {
+    if (document.documentElement.dataset) {
+        return function native(el, prop, value) {
+            if (typeof value !== 'undefined') {
+                return el.dataset[prop] = value;
+            } else {
+                return el.dataset[prop];
+            }
+        }
+    } else {
+        return function poly(el, prop, value) {
+            if (typeof value !== 'undefined') {
+                return el.setAttribute('data-' + prop, value);
+            }
+            else {
+                return el.getAttribute('data-' + prop);
+            }
+        }
+    }
+}();
+
+
 /**
  * Scrolly: fast vanilla JS scrollbar plugin.
  */
@@ -453,3 +476,35 @@
     this.scrollyst = scrls;
 
 }));
+
+
+var Scrolly = React.createClass({displayName: "Scrolly",
+    getDefaultProps: function() {
+        return {
+            params: {}
+        }
+    },
+    componentDidMount: function () {
+        if (typeof scrolly === 'undefined') {
+            return;
+        }
+
+        var area = this.refs.area.getDOMNode();
+
+        scrolly.barNode(area, this.props.params);
+    },
+    render: function() {
+        return (
+            React.createElement("div", React.__spread({},  this.props), 
+                React.createElement("div", {className: "scrolly react"}, 
+                    React.createElement("div", {ref: "area", className: "area"}, 
+                         this.props.children
+                    )
+                ), 
+                React.createElement("div", {className: "bar"}, 
+                    React.createElement("div", {className: "thumb"})
+                )
+            )
+        );
+    }
+});

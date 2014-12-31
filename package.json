@@ -1,10 +1,11 @@
 {
     "name": "scrolly",
-    "version": "0.4.2",
+    "version": "0.4.3",
     "description": "Scrolly: fast vanilla JS scrollbar plugin.",
     "keywords": [
         "scroll", "scrollbar", "scrolly", "bar",
         "js", "javascript", "vanilla", "amd",
+        "react", "reactjs", "component",
         "jquery", "zepto", "jbone"
     ],
     "repository": {
@@ -21,6 +22,7 @@
         "gulp-less": "*",
         "gulp-livereload": "*",
         "gulp-plumber": "*",
+        "gulp-react": "^2.0",
         "gulp-rename": "*",
         "gulp-uglify": "*",
         "gulp-wrapper": "*",

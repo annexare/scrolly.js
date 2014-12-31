@@ -8,6 +8,7 @@
         "$": true,
         "jBone": true,
         "jQuery": true,
+        "React": true,
         "Zepto": true
     },
     "node": true,
