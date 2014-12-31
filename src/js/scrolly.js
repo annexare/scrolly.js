@@ -32,12 +32,12 @@
             return (node.className = list.join(' '));
         },
         hasClass = function (className, node) {
-            var list = (node.className || '').split(/\s+/);
+            var list = (node ? node.className || '' : '').split(/\s+/);
 
             return (list.indexOf(className) !== -1);
         },
         removeClass = function (className, node) {
-            var list = (node.className || '').split(/\s+/),
+            var list = (node ? node.className || '' : '').split(/\s+/),
                 id = list.indexOf(className);
             if (id !== -1) {
                 list.splice(id, 1);

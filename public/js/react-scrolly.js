@@ -1,4 +1,4 @@
-/*  scrolly v0.4.3, 2014.12.31  */
+/*  scrolly v0.4.4, 2014.12.31  */
 var dataSet = function initDataSet() {
     if (document.documentElement.dataset) {
         return function native(el, prop, value) {
@@ -55,12 +55,12 @@ var dataSet = function initDataSet() {
             return (node.className = list.join(' '));
         },
         hasClass = function (className, node) {
-            var list = (node.className || '').split(/\s+/);
+            var list = (node ? node.className || '' : '').split(/\s+/);
 
             return (list.indexOf(className) !== -1);
         },
         removeClass = function (className, node) {
-            var list = (node.className || '').split(/\s+/),
+            var list = (node ? node.className || '' : '').split(/\s+/),
                 id = list.indexOf(className);
             if (id !== -1) {
                 list.splice(id, 1);
