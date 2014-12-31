@@ -4,7 +4,11 @@
         "define": true,
         "module": true,
         "scrolly": true,
-        "scrollyst": true
+        "scrollyst": true,
+        "$": true,
+        "jBone": true,
+        "jQuery": true,
+        "Zepto": true
     },
     "node": true,
     "browser": true,

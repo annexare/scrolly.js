@@ -88,10 +88,13 @@ html
             // jQuery Plugin
             var attrName = 'jQueryPlugin';
             $('.jquery').scrolly()
-                .attr(attrName, true);
+                .attr(attrName, 1);
+
+            $('.jquery.test4').scrolly('update')
+                .attr(attrName, 2);
 
             // jQuery Plugin: Off last one
-            $('.jquery.test5').scrolly({ dispose: true })
+            $('.jquery.test5').scrolly('dispose')
                 .removeAttr(attrName);
 
             var action = function (e) {

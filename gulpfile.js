@@ -5,6 +5,7 @@ var gulp = require('gulp'),
     less = require('gulp-less'),
     livereload = require('gulp-livereload'),
     autoprefixer = require('gulp-autoprefixer'),
+    plumber = require('gulp-plumber'),
     rename = require('gulp-rename'),
     uglify = require('gulp-uglify'),
     wrapper = require('gulp-wrapper'),
@@ -75,6 +76,7 @@ gulp.task('clean', function (cb) {
  */
 gulp.task('jade', function () {
     return gulp.src(src.jade)
+        .pipe(plumber())
         .pipe(jade())
         .pipe(gulp.dest(paths.server))
 });
@@ -94,6 +96,7 @@ gulp.task('jshint', function () {
  */
 gulp.task('less', function () {
     return gulp.src(src.less)
+        .pipe(plumber())
         .pipe(less(options.less))
         .pipe(wrapper({ footer: '\n\n' + banner() }))
         .pipe(autoprefixer({ cascade: false }))
@@ -108,9 +111,12 @@ gulp.task('build', function () {
         vendor('dataset.js'),
         src.js
     ])
+        .pipe(plumber())
+        // Development
         .pipe(concat('scrolly.js', { newLine: ';\n\n' }))
         .pipe(wrapper({ header: banner() }))
         .pipe(gulp.dest(paths.js))
+        // Production/Minified
         .pipe(rename({suffix: '.min'}))
         .pipe(uglify())
         .pipe(wrapper({ header: banner() }))

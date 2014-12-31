@@ -35,10 +35,10 @@ $('.selector').scrolly();
 // ...and it's chained as well
 
 // Update
-$('.selector').scrolly({ update: true });
+$('.selector').scrolly('update');
 
 // Dispose
-$('.selector').scrolly({ dispose: true });
+$('.selector').scrolly('dispose');
 ```
 
 ## Details

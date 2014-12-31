@@ -1,6 +1,6 @@
 {
     "name": "scrolly",
-    "version": "0.4.1",
+    "version": "0.4.2",
     "description": "Scrolly: fast vanilla JS scrollbar plugin.",
     "keywords": [
         "scroll", "scrollbar", "scrolly", "bar",
@@ -20,6 +20,7 @@
         "gulp-jshint": "*",
         "gulp-less": "*",
         "gulp-livereload": "*",
+        "gulp-plumber": "*",
         "gulp-rename": "*",
         "gulp-uglify": "*",
         "gulp-wrapper": "*",

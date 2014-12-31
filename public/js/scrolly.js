@@ -1,4 +1,4 @@
-/*  scrolly v0.4.1, 2014.12.29  */
+/*  scrolly v0.4.2, 2014.12.31  */
 var dataSet = function initDataSet() {
     if (document.documentElement.dataset) {
         return function native(el, prop, value) {
@@ -22,13 +22,20 @@ var dataSet = function initDataSet() {
 ;
 
 /**
- * Scrolly.js
- *
- * @todo Prepare for React.js
- * @todo Add more options: keep thumb pos on update, etc
+ * Scrolly: fast vanilla JS scrollbar plugin.
  */
 
-;(function () {
+;(function (factory) {
+    var jQ = $ || jQuery || Zepto || jBone;
+
+    if (typeof module !== 'undefined' && module.exports) {
+        factory.call(module.exports, jQ);
+    } else if (typeof define === 'function' && define.amd) {
+        define(['jquery'], factory);
+    } else {
+        factory.call(window, jQ);
+    }
+}(function ($) {
     'use strict';
 
     var title = 'Scrolly',
@@ -429,38 +436,31 @@ var dataSet = function initDataSet() {
             }
         };
 
-    if (typeof module !== 'undefined' && module.exports) {
-        module.exports = scrl;
-    } else if (typeof define !== 'undefined' && define.amd) {
-        define([], function () {
-            return scrl;
-        });
-    } else {
-        this.scrolly = scrl;
-        this.scrollyst = scrls;
-
-        // jQuery Plugin
-        var $ = this.$ || this.jQuery || this.Zepto || this.jBone;
-        if ($ && $.fn) {
-            $.fn.scrolly = function(params) {
-                var p = params || {};
-                if (p.dispose || p.update) {
-                    if (this.length) {
-                        this.forEach(function (el) {
-                            var id = dataSet(el, dataPrefix('id'));
-                            if (p.dispose) {
-                                scrl.dispose(id);
-                            } else if (p.update) {
-                                scrl.update(id);
-                            }
-                        });
-                    }
-                } else {
-                    scrl.bar(this, p);
-                }
+    // jQuery Plugin
+    if ($ && $.fn) {
+        $.fn.scrolly = function(param) {
+            // Empty selector
+            if (!this.length) {
                 return this;
-            };
-        }
+            }
+            // Initialize with params
+            if (typeof param !== 'string') {
+                scrl.bar(this, param || {});
+                return this;
+            }
+            // Available Methods
+            if (['dispose', 'update'].indexOf(param) > -1) {
+                this.forEach(function (el) {
+                    var id = dataSet(el, dataPrefix('id'));
+                    scrl[param](id);
+                });
+            }
+
+            return this;
+        };
     }
 
-}.call(this));
+    this.scrolly = scrl;
+    this.scrollyst = scrls;
+
+}));
