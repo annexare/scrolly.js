@@ -1,14 +1,21 @@
 # Scrolly: fast vanilla JS scrollbar plugin
 
 Aim is a fast + good looking scrollbar with zero dependencies, small size &amp; major browsers support.
-At the moment `MutationObserver` requires IE11, but works in all major desktop &amp; mobile browsers.
+So, the **Browser Support** is same as for [`MutationObserver`](https://developer.mozilla.org/en/docs/Web/API/MutationObserver#Browser_compatibility), works in all modern browsers for Desktop and Mobile.
 
 ## Install, via Bower or NPM
 
 * `bower install scrolly`
 * `npm install scrolly`
 
-## Usage
+## Features &amp; Usage
+
+* Small (5.5KB minified), fast, vanilla JS (zero dependencies)
+* Nested scrollbars
+* Touch support
+* jQuery/Zepto/jBone plugin
+* *React.js Component (soon)*
+* *Infinite scroll callbacks (soon)*
 
 ```js
 // Initialize
@@ -41,6 +48,10 @@ $('.selector').scrolly('update');
 $('.selector').scrolly('dispose');
 ```
 
+### Demo
+
+Just open `public/index.html`. Will be published online with `v0.5.0`.
+
 ## Details
 
 ### Data: DOM elements
@@ -55,11 +66,6 @@ data:       LESS:
 ### Data: numbers
 
 * `data.wrapRatio`: float `0..1`. Calculated as `wrapSize / areaSize`. When ` === 1` no scrollbar is shown.
-
-### Planned
-
-* Infinite Scroll callback
-* React.js Component
 
 ### Setup
 
