@@ -67,11 +67,13 @@ Just open `public/index.html`. Will be published online with `v0.5.0`.
 
 ### Data: DOM elements
 ```
-data:       LESS:
+data        LESS:
+{
   wrap      .scrolly
   area        .area
-  bar         .area + .bar
-  thumb         .thumb
+  bar       .scrolly + .bar
+  thumb       .thumb
+}
 ```
 
 ### Data: numbers
