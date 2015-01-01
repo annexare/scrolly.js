@@ -20,6 +20,7 @@ var Scrolly = React.createClass({
     componentWillUnmount: function() {
         if (this.id) {
             scrolly.dispose(this.id);
+            this.id = false;
         }
     },
     componentDidUpdate: function() {

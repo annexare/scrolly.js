@@ -500,6 +500,7 @@ var Scrolly = React.createClass({displayName: "Scrolly",
     componentWillUnmount: function() {
         if (this.id) {
             scrolly.dispose(this.id);
+            this.id = false;
         }
     },
     componentDidUpdate: function() {

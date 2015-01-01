@@ -28,6 +28,7 @@ var ScrollyTest = React.createClass({
     },
     getInitialState: function () {
         return {
+            disposed: false,
             nodes: [
                 ['h1', "Scrolly.js"],
                 ['h2', "React Component"]
@@ -51,6 +52,11 @@ var ScrollyTest = React.createClass({
             nodes: []
         });
     },
+    handleToggle: function () {
+        this.setState({
+            disposed: !this.state.disposed
+        });
+    },
     handleReset: function () {
         this.setState(this.getInitialState());
     },
@@ -71,10 +77,19 @@ var ScrollyTest = React.createClass({
                     &nbsp;&ndash;&nbsp;
                     <button onClick={ this.handleClear }>Clear</button>
                     <button onClick={ this.handleReset }>Reset</button>
+                    &nbsp;&ndash;&nbsp;
+                    <button onClick={ this.handleToggle }>Dispose/Enable</button>
+                    &nbsp;&ndash;&nbsp;
+                    <a href="/">Main Demo</a>,&nbsp;
+                    <a href="https://github.com/annexare/scrolly.js">View on GitHub</a>
                 </p>
-                <Scrolly params={ this.params } ref="scrolly">
-                { nodes }
-                </Scrolly>
+                {
+                    this.state.disposed
+                    ? nodes
+                    : <Scrolly params={ this.params } ref="scrolly">
+                        { nodes }
+                        </Scrolly>
+                    }
             </div>
         );
     }
