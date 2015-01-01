@@ -44,7 +44,8 @@ var bwr = JSON.parse(fs.readFileSync('./.bowerrc')),// standard require() doesn'
     src = {
         jade: sources + 'jade/{,*/}index.jade',
         js: sources + 'js/*.js',
-        jsx: sources + 'jsx/*.jsx',
+        jsx: sources + 'jsx/react-*.jsx',
+        jsxTest: sources + 'jsx/test-*.jsx',
         less: sources + 'less/styles*.less'
     },
     pkg = require('./package.json'),
@@ -115,6 +116,21 @@ gulp.task('jsx', function () {
         .pipe(wrapper({ header: banner() }))
         .pipe(gulp.dest(paths.js));
 });
+/*
+ * React JSX test component
+ */
+gulp.task('jsx-test', function () {
+    return gulp.src([
+        src.jsxTest
+    ])
+        .pipe(plumber())
+        .pipe(concat('react-scrolly-test.js', {newLine: '\n\n'}))
+        .pipe(react())
+        .on('error', function (e) {
+            console.error(e.message + '\n  in ' + e.fileName);
+        })
+        .pipe(gulp.dest(paths.js))
+});
 
 /*
  * LESS sources.
@@ -180,7 +196,7 @@ gulp.task('vendor-react', function () {
  * Build, Watch & Default tasks.
  * Runs pre-build automatically on run.
  */
-gulp.task('build-all', ['jshint', 'build', 'vendor', 'vendor-react', 'jsx', 'less', 'jade']);
+gulp.task('build-all', ['jshint', 'build', 'vendor', 'vendor-react', 'jsx', 'jsx-test', 'less', 'jade']);
 
 gulp.task('serve', ['build-all'], function() {
     var http = require('http'),
@@ -200,6 +216,7 @@ gulp.task('watch', ['serve'], function () {
     gulp.watch(src.jade, ['jade']);
     gulp.watch(src.js, ['jshint', 'build']);
     gulp.watch(src.jsx, ['jsx']);
+    gulp.watch(src.jsxTest, ['jsx-test']);
     gulp.watch(src.less, ['less']);
 
     gulp.watch(paths.server + masks.all).on('change', livereload.changed);

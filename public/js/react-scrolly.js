@@ -1,4 +1,4 @@
-/*  scrolly v0.4.4, 2014.12.31  */
+/*  scrolly v0.4.5, 2015.01.01  */
 var dataSet = function initDataSet() {
     if (document.documentElement.dataset) {
         return function native(el, prop, value) {
@@ -484,15 +484,30 @@ var Scrolly = React.createClass({displayName: "Scrolly",
             params: {}
         }
     },
+    getID: function () {
+        return this.id;
+    },
     componentDidMount: function () {
         if (typeof scrolly === 'undefined') {
             return;
         }
 
-        var area = this.refs.area.getDOMNode();
-
-        scrolly.barNode(area, this.props.params);
+        this.id = scrolly.barNode(
+            this.refs.area.getDOMNode(),
+            this.props.params
+        );
     },
+    componentWillUnmount: function() {
+        if (this.id) {
+            scrolly.dispose(this.id);
+        }
+    },
+    componentDidUpdate: function() {
+        if (this.id) {
+            scrolly.update(this.id);
+        }
+    },
+
     render: function() {
         return (
             React.createElement("div", React.__spread({},  this.props), 
@@ -508,3 +523,7 @@ var Scrolly = React.createClass({displayName: "Scrolly",
         );
     }
 });
+
+if (typeof module !== 'undefined') {
+    module.exports = Scrolly;
+}

@@ -4,15 +4,30 @@ var Scrolly = React.createClass({
             params: {}
         }
     },
+    getID: function () {
+        return this.id;
+    },
     componentDidMount: function () {
         if (typeof scrolly === 'undefined') {
             return;
         }
 
-        var area = this.refs.area.getDOMNode();
-
-        scrolly.barNode(area, this.props.params);
+        this.id = scrolly.barNode(
+            this.refs.area.getDOMNode(),
+            this.props.params
+        );
     },
+    componentWillUnmount: function() {
+        if (this.id) {
+            scrolly.dispose(this.id);
+        }
+    },
+    componentDidUpdate: function() {
+        if (this.id) {
+            scrolly.update(this.id);
+        }
+    },
+
     render: function() {
         return (
             <div {...this.props}>
@@ -28,3 +43,7 @@ var Scrolly = React.createClass({
         );
     }
 });
+
+if (typeof module !== 'undefined') {
+    module.exports = Scrolly;
+}
