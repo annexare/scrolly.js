@@ -1,3 +1,5 @@
+- var home = '..';
+
 doctype html
 html
     include ../head.jade
@@ -5,9 +7,9 @@ html
     body
         #scrolly
 
-        script(src='/js/react.js')
-        script(src='/js/react-scrolly.js')
-        script(src='/js/react-scrolly-test.js')
+        script(src=home + '/js/react.js')
+        script(src=home + '/js/react-scrolly.js')
+        script(src=home + '/js/react-scrolly-test.js')
         script.
             React.render(
                 React.createElement(ScrollyTest),

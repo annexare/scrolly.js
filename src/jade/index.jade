@@ -1,3 +1,5 @@
+- var home = '.';
+
 doctype html
 html
     include head.jade
@@ -53,8 +55,8 @@ html
                 p END.
 
 
-        script(src='/js/vendor.js')
-        script(src='/js/scrolly.js')
+        script(src=home + '/js/vendor.js')
+        script(src=home + '/js/scrolly.js')
         script.
             // Send Query
             scrolly.bar('article.query');

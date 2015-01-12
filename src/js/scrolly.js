@@ -14,8 +14,9 @@
     'use strict';
 
     var title = 'Scrolly',
+        name = title.toLowerCase(),
         dataPrefix = function (param) {
-            return 'scrolly' + param;
+            return name + param;
         },
         message = function (text) {
             return title + ': ' + text;
@@ -167,6 +168,12 @@
             thumbMinSize: 24,
 
             // Public methods
+            /**
+             * Main init, accepts string, nodes|node or $ as query.
+             * @param query
+             * @param params
+             * @returns Array|boolean
+             */
             bar: function (query, params) {
                 if (!query) {
                     console.log(message('No Query specified.'));
@@ -177,11 +184,7 @@
                         ? document.querySelectorAll(query)
                         : query;
                 if (!$query.length) {
-                    if ($query instanceof HTMLElement) {
-                        return [this.barNode($query, params)];
-                    }
-                    console.log(message('Couldn\'t query:'), typeof query, query, params);
-                    return false;
+                    return [this.barNode($query, params)];
                 }
 
                 var ids = [];
@@ -191,7 +194,19 @@
 
                 return ids;
             },
+            /**
+             * Init for a single node.
+             * @param node
+             * @param params
+             * @returns Number|boolean
+             */
             barNode: function (node, params) {
+                // Check Node type
+                if (!node || !node.nodeType) {
+                    console.log(message('Couldn\'t query:'), typeof node, node, params);
+                    return false;
+                }
+                // Check if already initialized
                 if (typeof dataSet(node, dataPrefix('id')) !== 'undefined') {
                     this.dispose(dataSet(node, dataPrefix('id')));
                 }
@@ -205,6 +220,7 @@
 
                 var opts = params || {},
                     data = {
+                        dispose: {},
                         params: opts,
                         scrolled: 0,
                         visible: false
@@ -216,7 +232,13 @@
 
                 // Area
                 addClass('area', node);
-                data.wrap = wrap(node, 'scrolly');
+                if (hasClass(name, node.parentNode)) {
+                    // Wrap exists
+                    data.wrap = node;
+                } else {
+                    data.wrap = wrap(node, name);
+                    data.dispose.wrap = true;
+                }
                 data.area = node;
 
                 // Bar
@@ -232,12 +254,14 @@
                     } else {
                         data.bar.innerHTML = '';
                         data.thumb = data.bar.appendChild(div(thumbClassName));
+                        data.dispose.thumb = true;
                     }
                 } else {
                     var bar = div(barClassName);
                     data.thumb = bar.appendChild(div(thumbClassName));
                     data.bar = data.wrap.parentNode
                         .insertBefore(bar, data.wrap.nextSibling);
+                    data.dispose.bar = true;
                 }
 
                 // Store Data
@@ -251,7 +275,7 @@
             /**
              * Dispose Scrolly from node. Remove all extra elements, unwrap.
              * @param id
-             * @returns {boolean}
+             * @returns boolean
              */
             dispose: function (id) {
                 var no = (
@@ -280,9 +304,17 @@
                 // Cleanup
                 removeClass('area', data.area);
                 data.area.removeAttribute('data-' + dataPrefix('id'));
-                data.wrap.parentNode.insertBefore(data.area, data.wrap);
-                data.wrap.parentNode.removeChild(data.wrap);
-                data.bar.parentNode.removeChild(data.bar);
+                // Extra Nodes
+                if (data.dispose.wrap) {
+                    data.wrap.parentNode.insertBefore(data.area, data.wrap);
+                    data.wrap.parentNode.removeChild(data.wrap);
+                }
+                if (data.dispose.thumb) {
+                    data.thumb.parentNode.removeChild(data.thumb);
+                }
+                if (data.dispose.bar) {
+                    data.bar.parentNode.removeChild(data.bar);
+                }
                 // Well, we won't change all IDs to remove it
                 scrls[no] = false;
 
@@ -296,7 +328,7 @@
             /**
              * Get Scrolly ID by current data object.
              * @param data
-             * @returns {*}
+             * @returns String
              */
             getID: function (data) {
                 return dataSet(data.area, dataPrefix('id'));

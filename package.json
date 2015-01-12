@@ -1,12 +1,13 @@
 {
     "name": "scrolly",
-    "version": "0.4.5",
+    "version": "0.4.6",
     "description": "Scrolly: fast vanilla JS scrollbar plugin.",
     "keywords": [
         "scroll", "scrollbar", "scrolly", "bar",
         "js", "javascript", "vanilla", "amd",
         "react", "reactjs", "component",
-        "jquery", "zepto", "jbone"
+        "jquery", "zepto", "jbone",
+        "annexare"
     ],
     "repository": {
         "type": "git",
