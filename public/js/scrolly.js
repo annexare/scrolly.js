@@ -257,7 +257,7 @@ var dataSet = function initDataSet() {
                 addClass('area', node);
                 if (hasClass(name, node.parentNode)) {
                     // Wrap exists
-                    data.wrap = node;
+                    data.wrap = node.parentNode;
                 } else {
                     data.wrap = wrap(node, name);
                     data.dispose.wrap = true;

@@ -36,7 +36,7 @@ scrolly.disposeAll();
 
 ### React Component
 
-See example usage via `gulp watch` and [localhost:3001/react](http://localhost:3001/react/). Or just look at `public/react/index.html` in this repo.
+See example usage via `gulp watch` and [/react](https://annexare.com/js/scrolly/react/). Or just look at `public/react/index.html` in this repo.
 
 ```jsx
 <Scrolly params={ params }>
@@ -61,7 +61,7 @@ $('.selector').scrolly('dispose');
 
 ### Demo
 
-Just open `public/index.html`. Will be published online with `v0.5.0`.
+Just open `public/index.html`, or check the [live demo](https://annexare.com/js/scrolly/).
 
 ## Details
 
