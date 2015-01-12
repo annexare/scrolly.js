@@ -80,7 +80,7 @@ var ScrollyTest = React.createClass({
                     &nbsp;&ndash;&nbsp;
                     <button onClick={ this.handleToggle }>Dispose/Enable</button>
                     &nbsp;&ndash;&nbsp;
-                    <a href="/">Main Demo</a>,&nbsp;
+                    <a href="../">Main Demo</a>,&nbsp;
                     <a href="https://github.com/annexare/scrolly.js">View on GitHub</a>
                 </p>
                 {
