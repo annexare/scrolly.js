@@ -9,6 +9,11 @@
         "jquery", "zepto", "jbone",
         "annexare"
     ],
+    "author": {
+        "name": "Dmytro",
+        "email": "z@annexare.com",
+        "url": "https://github.com/z-ax"
+    },
     "dependencies": {
     },
     "devDependencies": {

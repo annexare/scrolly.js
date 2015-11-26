@@ -13,6 +13,7 @@
         "type": "git",
         "url": "https://github.com/annexare/scrolly.js.git"
     },
+    "main": "public/js/scrolly.js",
     "dependencies": {},
     "devDependencies": {
         "gulp": "*",
@@ -32,7 +33,15 @@
         "jshint-stylish": "*",
         "moment": "*"
     },
-    "main": "public/js/scrolly.js",
+    "author": {
+        "name": "Dmytro",
+        "email": "z@annexare.com",
+        "url": "https://github.com/z-ax"
+    },
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/annexare/scrolly.js/issues"
+    },
     "engines": {
         "node": ">=0.10.31"
     }
