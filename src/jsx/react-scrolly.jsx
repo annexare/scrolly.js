@@ -12,8 +12,9 @@ var Scrolly = React.createClass({
             return;
         }
 
+        // test
         this.id = scrolly.barNode(
-            this.refs.area.getDOMNode(),
+            this.refs.area,
             this.props.params
         );
     },

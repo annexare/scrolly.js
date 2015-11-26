@@ -8,10 +8,11 @@ html
         #scrolly
 
         script(src=home + '/js/react.js')
+        script(src=home + '/js/react-dom.js')
         script(src=home + '/js/react-scrolly.js')
         script(src=home + '/js/react-scrolly-test.js')
         script.
-            React.render(
+            ReactDOM.render(
                 React.createElement(ScrollyTest),
                 document.getElementById('scrolly')
             );

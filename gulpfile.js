@@ -186,7 +186,8 @@ gulp.task('vendor', function () {
  */
 gulp.task('vendor-react', function () {
     return gulp.src([
-        vendor('react/react.js')
+        vendor('react/react.js'),
+        vendor('react/react-dom.js')
     ])
         .pipe(gulp.dest(paths.js));
 });

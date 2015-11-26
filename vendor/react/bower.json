@@ -1,6 +1,5 @@
 {
   "name": "react",
-  "version": "0.12.2",
-  "main": "react.js",
+  "main": ["react.js", "react-dom.js"],
   "ignore": []
 }

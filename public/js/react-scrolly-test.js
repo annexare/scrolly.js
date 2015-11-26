@@ -1,4 +1,4 @@
-var ScrollyTest = React.createClass({
+var ScrollyTest = React.createClass({displayName: "ScrollyTest",
     statics: {
         small: [
             ['h1', "Small Article"],
@@ -67,30 +67,30 @@ var ScrollyTest = React.createClass({
         });
 
         return (
-            <div className="test">
-                <p className="test-buttons">
-                    Add some more Text into scroll area:
-                    &nbsp;
-                    <button className="small" onClick={ this.handleAppend }>Small</button>
-                    <button className="medium" onClick={ this.handleAppend }>Medium</button>
-                    <button className="large" onClick={ this.handleAppend }>Large</button>
-                    &nbsp;&ndash;&nbsp;
-                    <button onClick={ this.handleClear }>Clear</button>
-                    <button onClick={ this.handleReset }>Reset</button>
-                    &nbsp;&ndash;&nbsp;
-                    <button onClick={ this.handleToggle }>{ this.state.disposed ? 'Enable' : 'Dispose' }</button>
-                    &nbsp;&ndash;&nbsp;
-                    <a href="../">Main Demo</a>,&nbsp;
-                    <a href="https://github.com/annexare/scrolly.js">View on GitHub</a>
-                </p>
-                {
+            React.createElement("div", {className: "test"}, 
+                React.createElement("p", {className: "test-buttons"}, 
+                    "Add some more Text into scroll area:" + ' ' +
+                    " ", 
+                    React.createElement("button", {className: "small", onClick:  this.handleAppend}, "Small"), 
+                    React.createElement("button", {className: "medium", onClick:  this.handleAppend}, "Medium"), 
+                    React.createElement("button", {className: "large", onClick:  this.handleAppend}, "Large"), 
+                    " – ", 
+                    React.createElement("button", {onClick:  this.handleClear}, "Clear"), 
+                    React.createElement("button", {onClick:  this.handleReset}, "Reset"), 
+                    " – ", 
+                    React.createElement("button", {onClick:  this.handleToggle},  this.state.disposed ? 'Enable' : 'Dispose'), 
+                    " – ", 
+                    React.createElement("a", {href: "../"}, "Main Demo"), ", ", 
+                    React.createElement("a", {href: "https://github.com/annexare/scrolly.js"}, "View on GitHub")
+                ), 
+                
                     this.state.disposed
                     ? nodes
-                    : <Scrolly params={ this.params } ref="scrolly">
-                        { nodes }
-                        </Scrolly>
-                    }
-            </div>
+                    : React.createElement(Scrolly, {params:  this.params, ref: "scrolly"}, 
+                         nodes 
+                        )
+                    
+            )
         );
     }
 });

@@ -1,9 +1,9 @@
 /*!
- * jBone v1.0.20 - 2014-11-27 - Library for DOM manipulation
+ * jBone v1.1.2 - 2015-10-09 - Library for DOM manipulation
  *
- * https://github.com/kupriyanenko/jbone
+ * http://jbone.js.org
  *
- * Copyright 2014 Alexey Kupriyanenko
+ * Copyright 2015 Alexey Kupriyanenko
  * Released under the MIT license.
  */
 
@@ -36,8 +36,7 @@ isObject = function(el) {
     return el instanceof Object;
 },
 isFunction = function(el) {
-    var getType = {};
-    return el && getType.toString.call(el) === "[object Function]";
+    return ({}).toString.call(el) === "[object Function]";
 },
 isArray = function(el) {
     return Array.isArray(el);
@@ -194,6 +193,12 @@ function isArraylike(obj) {
         typeof length === "number" && length > 0 && (length - 1) in obj;
 }
 
+fn.pushStack = function(elems) {
+    var ret = jBone.merge(this.constructor(), elems);
+
+    return ret;
+};
+
 jBone.merge = function(first, second) {
     var l = second.length,
         i = first.length,
@@ -209,32 +214,19 @@ jBone.merge = function(first, second) {
 };
 
 jBone.contains = function(container, contained) {
-    var result;
-
-    container.reverse().some(function(el) {
-        if (el.contains(contained)) {
-            return result = el;
-        }
-    });
-
-    return result;
+    return container.contains(contained);
 };
 
 jBone.extend = function(target) {
-    var k, kl, i, tg;
+    var tg;
 
-    splice.call(arguments, 1).forEach(function(object) {
-        if (!object) {
-            return;
-        }
-
-        k = keys(object);
-        kl = k.length;
-        i = 0;
+    splice.call(arguments, 1).forEach(function(source) {
         tg = target; //caching target for perf improvement
 
-        for (; i < kl; i++) {
-            tg[k[i]] = object[k[i]];
+        if (source) {
+            for (var prop in source) {
+                tg[prop] = source[prop];
+            }
         }
     });
 
@@ -255,6 +247,22 @@ jBone.makeArray = function(arr, results) {
     return ret;
 };
 
+jBone.unique = function(array) {
+    if (array == null) {
+        return [];
+    }
+
+    var result = [];
+
+    for (var i = 0, length = array.length; i < length; i++) {
+        var value = array[i];
+        if (result.indexOf(value) < 0) {
+            result.push(value);
+        }
+    }
+    return result;
+};
+
 function BoneEvent(e, data) {
     var key, setter;
 
@@ -264,6 +272,11 @@ function BoneEvent(e, data) {
         if (key === "preventDefault") {
             this[key] = function() {
                 this.defaultPrevented = true;
+                return e[key]();
+            };
+        } else if (key === "stopImmediatePropagation") {
+            this[key] = function() {
+                this.immediatePropagationStopped = true;
                 return e[key]();
             };
         } else if (isFunction(e[key])) {
@@ -281,7 +294,11 @@ function BoneEvent(e, data) {
         }
     }
 
-    jBone.extend(this, data);
+    jBone.extend(this, data, {
+        isImmediatePropagationStopped: function() {
+            return !!this.immediatePropagationStopped;
+        }
+    });
 }
 
 jBone.Event = function(event, data) {
@@ -306,163 +323,84 @@ jBone.Event = function(event, data) {
     }, data);
 };
 
-fn.on = function(event) {
-    var args = arguments,
-        length = this.length,
-        i = 0,
-        callback, target, namespace, fn, events, eventType, expectedTarget, addListener;
+jBone.event = {
 
-    if (args.length === 2) {
-        callback = args[1];
-    } else {
-        target = args[1];
-        callback = args[2];
-    }
-
-    addListener = function(el) {
+    /**
+     * Attach a handler to an event for the elements
+     * @param {Node}        el         - Events will be attached to this DOM Node
+     * @param {String}      types      - One or more space-separated event types and optional namespaces
+     * @param {Function}    handler    - A function to execute when the event is triggered
+     * @param {Object}      [data]     - Data to be passed to the handler in event.data
+     * @param {String}      [selector] - A selector string to filter the descendants of the selected elements
+     */
+    add: function(el, types, handler, data, selector) {
         jBone.setId(el);
-        events = jBone.getData(el).events;
-        event.split(" ").forEach(function(event) {
+
+        var eventHandler = function(e) {
+                jBone.event.dispatch.call(el, e);
+            },
+            events = jBone.getData(el).events,
+            eventType, t, event;
+
+        types = types.split(" ");
+        t = types.length;
+        while (t--) {
+            event = types[t];
+
             eventType = event.split(".")[0];
-            namespace = event.split(".").splice(1).join(".");
             events[eventType] = events[eventType] || [];
 
-            fn = function(e) {
-                if (e.namespace && e.namespace !== namespace) {
-                    return;
-                }
-
-                expectedTarget = null;
-                if (!target) {
-                    callback.call(el, e);
-                } else if (~jBone(el).find(target).indexOf(e.target) || (expectedTarget = jBone.contains(jBone(el).find(target), e.target))) {
-                    expectedTarget = expectedTarget || e.target;
-                    e = new BoneEvent(e, {
-                        currentTarget: expectedTarget
-                    });
-
-                    callback.call(expectedTarget, e);
-                }
-            };
+            if (events[eventType].length) {
+                // override with previous event handler
+                eventHandler = events[eventType][0].fn;
+            } else {
+                el.addEventListener && el.addEventListener(eventType, eventHandler, false);
+            }
 
             events[eventType].push({
-                namespace: namespace,
-                fn: fn,
-                originfn: callback
+                namespace: event.split(".").splice(1).join("."),
+                fn: eventHandler,
+                selector: selector,
+                data: data,
+                originfn: handler
             });
+        }
+    },
 
-            el.addEventListener && el.addEventListener(eventType, fn, false);
-        });
-    };
+    /**
+     * Remove an event handler
+     * @param  {Node}       el        - Events will be deattached from this DOM Node
+     * @param  {String}     types     - One or more space-separated event types and optional namespaces
+     * @param  {Function}   handler   - A handler function previously attached for the event(s)
+     */
+    remove: function(el, types, handler) {
+        var removeListener = function(events, eventType, index, el, e) {
+                var callback;
 
-    for (; i < length; i++) {
-        addListener(this[i]);
-    }
+                // get callback
+                if ((handler && e.originfn === handler) || !handler) {
+                    callback = e.fn;
+                }
 
-    return this;
-};
+                if (events[eventType][index].fn === callback) {
+                    // remove handler from cache
+                    events[eventType].splice(index, 1);
 
-fn.one = function(event) {
-    var args = arguments,
-        i = 0,
-        length = this.length,
-        callback, target, addListener;
-
-    if (args.length === 2) {
-        callback = args[1];
-    } else {
-        target = args[1], callback = args[2];
-    }
-
-    addListener = function(el) {
-        event.split(" ").forEach(function(event) {
-            var fn = function(e) {
-                jBone(el).off(event, fn);
-                callback.call(el, e);
-            };
-
-            if (!target) {
-                jBone(el).on(event, fn);
-            } else {
-                jBone(el).on(event, target, fn);
-            }
-        });
-    };
-
-    for (; i < length; i++) {
-        addListener(this[i]);
-    }
-
-    return this;
-};
-
-fn.trigger = function(event) {
-    var events = [],
-        i = 0,
-        length = this.length,
-        dispatchEvents;
-
-    if (!event) {
-        return this;
-    }
-
-    if (isString(event)) {
-        events = event.split(" ").map(function(event) {
-            return jBone.Event(event);
-        });
-    } else {
-        event = event instanceof Event ? event : jBone.Event(event);
-        events = [event];
-    }
-
-    dispatchEvents = function(el) {
-        events.forEach(function(event) {
-            if (!event.type) {
-                return;
-            }
-
-            el.dispatchEvent && el.dispatchEvent(event);
-        });
-    };
-
-    for (; i < length; i++) {
-        dispatchEvents(this[i]);
-    }
-
-    return this;
-};
-
-fn.off = function(event, fn) {
-    var i = 0,
-        length = this.length,
-        removeListener = function(events, eventType, index, el, e) {
-            var callback;
-
-            // get callback
-            if ((fn && e.originfn === fn) || !fn) {
-                callback = e.fn;
-            }
-
-            if (events[eventType][index].fn === callback) {
-                el.removeEventListener(eventType, callback);
-
-                // remove handler from cache
-                jBone._cache.events[jBone.getData(el).jid][eventType].splice(index, 1);
-            }
-        },
-        events, namespace, removeListeners, eventType;
-
-    removeListeners = function(el) {
-        var l, eventsByType, e;
-
-        events = jBone.getData(el).events;
+                    if (!events[eventType].length) {
+                        el.removeEventListener(eventType, callback);
+                    }
+                }
+            },
+            events = jBone.getData(el).events,
+            l,
+            eventsByType;
 
         if (!events) {
             return;
         }
 
         // remove all events
-        if (!event && events) {
+        if (!types && events) {
             return keys(events).forEach(function(eventType) {
                 eventsByType = events[eventType];
                 l = eventsByType.length;
@@ -473,9 +411,10 @@ fn.off = function(event, fn) {
             });
         }
 
-        event.split(" ").forEach(function(event) {
-            eventType = event.split(".")[0];
-            namespace = event.split(".").splice(1).join(".");
+        types.split(" ").forEach(function(eventName) {
+            var eventType = eventName.split(".")[0],
+                namespace = eventName.split(".").splice(1).join("."),
+                e;
 
             // remove named events
             if (events[eventType]) {
@@ -504,10 +443,192 @@ fn.off = function(event, fn) {
                 });
             }
         });
+    },
+
+    /**
+     * Execute all handlers and behaviors attached to the matched elements for the given event type.
+     * @param  {Node}       el       - Events will be triggered for thie DOM Node
+     * @param  {String}     event    - One or more space-separated event types and optional namespaces
+     */
+    trigger: function(el, event) {
+        var events = [];
+
+        if (isString(event)) {
+            events = event.split(" ").map(function(event) {
+                return jBone.Event(event);
+            });
+        } else {
+            event = event instanceof Event ? event : jBone.Event(event);
+            events = [event];
+        }
+
+        events.forEach(function(event) {
+            if (!event.type) {
+                return;
+            }
+
+            el.dispatchEvent && el.dispatchEvent(event);
+        });
+    },
+
+    dispatch: function(e) {
+        var i = 0,
+            j = 0,
+            el = this,
+            handlers = jBone.getData(el).events[e.type],
+            length = handlers.length,
+            handlerQueue = [],
+            targets = [],
+            l,
+            expectedTarget,
+            handler,
+            event,
+            eventOptions;
+
+        // cache all events handlers, fix issue with multiple handlers (issue #45)
+        for (; i < length; i++) {
+            handlerQueue.push(handlers[i]);
+        }
+
+        i = 0;
+        length = handlerQueue.length;
+
+        for (;
+            // if event exists
+            i < length &&
+            // if handler is not removed from stack
+            ~handlers.indexOf(handlerQueue[i]) &&
+            // if propagation is not stopped
+            !(event && event.isImmediatePropagationStopped());
+        i++) {
+            expectedTarget = null;
+            eventOptions = {};
+            handler = handlerQueue[i];
+            handler.data && (eventOptions.data = handler.data);
+
+            // event handler without selector
+            if (!handler.selector) {
+                event = new BoneEvent(e, eventOptions);
+
+                if (!(e.namespace && e.namespace !== handler.namespace)) {
+                    handler.originfn.call(el, event);
+                }
+            }
+            // event handler with selector
+            else if (
+                // if target and selected element the same
+                ~(targets = jBone(el).find(handler.selector)).indexOf(e.target) && (expectedTarget = e.target) ||
+                // if one of element matched with selector contains target
+                (el !== e.target && el.contains(e.target))
+            ) {
+                // get element matched with selector
+                if (!expectedTarget) {
+                    l = targets.length;
+                    j = 0;
+
+                    for (; j < l; j++) {
+                        if (targets[j] && targets[j].contains(e.target)) {
+                            expectedTarget = targets[j];
+                        }
+                    }
+                }
+
+                if (!expectedTarget) {
+                    continue;
+                }
+
+                eventOptions.currentTarget = expectedTarget;
+                event = new BoneEvent(e, eventOptions);
+
+                if (!(e.namespace && e.namespace !== handler.namespace)) {
+                    handler.originfn.call(expectedTarget, event);
+                }
+            }
+        }
+    }
+};
+
+fn.on = function(types, selector, data, fn) {
+    var length = this.length,
+        i = 0;
+
+    if (data == null && fn == null) {
+        // (types, fn)
+        fn = selector;
+        data = selector = undefined;
+    } else if (fn == null) {
+        if (typeof selector === "string") {
+            // (types, selector, fn)
+            fn = data;
+            data = undefined;
+        } else {
+            // (types, data, fn)
+            fn = data;
+            data = selector;
+            selector = undefined;
+        }
+    }
+
+    if (!fn) {
+        return this;
+    }
+
+    for (; i < length; i++) {
+        jBone.event.add(this[i], types, fn, data, selector);
+    }
+
+    return this;
+};
+
+fn.one = function(event) {
+    var args = arguments,
+        i = 0,
+        length = this.length,
+        oneArgs = slice.call(args, 1, args.length - 1),
+        callback = slice.call(args, -1)[0],
+        addListener;
+
+    addListener = function(el) {
+        var $el = jBone(el);
+
+        event.split(" ").forEach(function(event) {
+            var fn = function(e) {
+                $el.off(event, fn);
+                callback.call(el, e);
+            };
+
+            $el.on.apply($el, [event].concat(oneArgs, fn));
+        });
     };
 
     for (; i < length; i++) {
-        removeListeners(this[i]);
+        addListener(this[i]);
+    }
+
+    return this;
+};
+
+fn.trigger = function(event) {
+    var i = 0,
+        length = this.length;
+
+    if (!event) {
+        return this;
+    }
+
+    for (; i < length; i++) {
+        jBone.event.trigger(this[i], event);
+    }
+
+    return this;
+};
+
+fn.off = function(types, handler) {
+    var i = 0,
+        length = this.length;
+
+    for (; i < length; i++) {
+        jBone.event.remove(this[i], types, handler);
     }
 
     return this;
@@ -533,7 +654,13 @@ fn.find = function(selector) {
 };
 
 fn.get = function(index) {
-    return this[index];
+    return index != null ?
+
+        // Return just one element from the set
+        (index < 0 ? this[index + this.length] : this[index]) :
+
+        // Return all the elements in a clean array
+        slice.call(this);
 };
 
 fn.eq = function(index) {
@@ -573,6 +700,14 @@ fn.has = function() {
     return this.some(function(el) {
         return el.querySelectorAll(args[0]).length;
     });
+};
+
+fn.add = function(selector, context) {
+    return this.pushStack(
+        jBone.unique(
+            jBone.merge(this.get(), jBone(selector, context))
+        )
+    );
 };
 
 fn.attr = function(key, value) {
@@ -745,6 +880,70 @@ fn.removeData = function(key) {
     return this;
 };
 
+fn.addClass = function(className) {
+    var i = 0,
+        j = 0,
+        length = this.length,
+        classes = className ? className.trim().split(/\s+/) : [];
+
+    for (; i < length; i++) {
+        j = 0;
+
+        for (j = 0; j < classes.length; j++) {
+            this[i].classList.add(classes[j]);
+        }
+    }
+
+    return this;
+};
+
+fn.removeClass = function(className) {
+    var i = 0,
+        j = 0,
+        length = this.length,
+        classes = className ? className.trim().split(/\s+/) : [];
+
+    for (; i < length; i++) {
+        j = 0;
+
+        for (j = 0; j < classes.length; j++) {
+            this[i].classList.remove(classes[j]);
+        }
+    }
+
+    return this;
+};
+
+fn.toggleClass = function(className, force) {
+    var i = 0,
+        length = this.length,
+        method = "toggle";
+
+    force === true && (method = "add") || force === false && (method = "remove");
+
+    if (className) {
+        for (; i < length; i++) {
+            this[i].classList[method](className);
+        }
+    }
+
+    return this;
+};
+
+fn.hasClass = function(className) {
+    var i = 0, length = this.length;
+
+    if (className) {
+        for (; i < length; i++) {
+            if (this[i].classList.contains(className)) {
+                return true;
+            }
+        }
+    }
+
+    return false;
+};
+
 fn.html = function(value) {
     var args = arguments,
         el;
@@ -770,7 +969,7 @@ fn.append = function(appended) {
     if (isString(appended) && rquickExpr.exec(appended)) {
         appended = jBone(appended);
     }
-    // create text node for inserting
+    // create text node for insertion
     else if (!isObject(appended)) {
         appended = document.createTextNode(appended);
     }
@@ -821,7 +1020,7 @@ fn.remove = function() {
         length = this.length,
         el;
 
-    // remove all listners
+    // remove all listeners
     this.off();
 
     for (; i < length; i++) {

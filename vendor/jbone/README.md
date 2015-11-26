@@ -1,36 +1,44 @@
-# jBone 
+# Meet jBone
 
-[![Build Status](https://travis-ci.org/kupriyanenko/jbone.png?branch=master)](https://travis-ci.org/kupriyanenko/jbone)
-[![Bower version](https://badge.fury.io/bo/jbone.png)](http://badge.fury.io/bo/jbone)
-[![NPM version](https://badge.fury.io/js/jbone.png)](http://badge.fury.io/js/jbone)
+[![Join the chat at https://gitter.im/kupriyanenko/jbone](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/kupriyanenko/jbone?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-http://kupriyanenko.github.io/jbone/
+[![Build Status](https://travis-ci.org/kupriyanenko/jbone.svg?branch=master)](https://travis-ci.org/kupriyanenko/jbone)
+[![Bower version](https://badge.fury.io/bo/jbone.svg)](http://jbone.js.org)
+[![npm version](https://badge.fury.io/js/jbone.svg)](https://www.npmjs.com/package/jbone)
+[![JS.ORG](https://img.shields.io/badge/js.org-jbone-ffb400.svg)](http://jbone.js.org)
+[![CDNJS.COM](https://img.shields.io/badge/cdnjs.com-jbone-ffb400.svg)](https://cdnjs.com/libraries/jbone)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/kupriyanenko/jbone)
+[![GitHub Stats](https://img.shields.io/badge/github-stats-ff5500.svg)](http://githubstats.com/kupriyanenko/jbone)
 
-JavaScript Library for DOM manipulation in modern browsers with jQuery-compatible API.
+jBone is very small and fast abstraction for Events and DOM manipulation in modern browsers with identical jQuery interfaces in most cases.
 
-Replacement jQuery for Backbone in browsers (2.5kb gzipped, faster than jQuery/Zepto)
+It replaces jQuery for Backbone in web and mobile applications (about 2.5kb gzipped, much faster than jQuery and Zepto).
 
 ## Why jBone?
 
-jBone is extremely small (2.5kb) and realy fast library. Main jBone idea - it's as much as possible to use native JavaScript methods in your project.
+The main idea of jBone is to use native JavaScript methods as much as possible in your project.
 
-jBone it is ideal solutions for applications based on Backbone and running on mobile devices. jBone project was created to allow people using Backbone without jQuery.
+It is superior solution for applications based on Backbone and running on mobile devices as it is extremely small (2.5kb) and really fast library.
+
+jBone project was created to allow people to use Backbone without jQuery.
+
+See benchmark results [here](http://kupriyanenko.github.io/jbone/perf.html).
 
 ## Get it
 
-##### With bower
+##### Via bower
 
 ```
 $ bower install jbone --save
 ```
 
-##### With component
+##### Via component
 
 ```
 component install kupriyanenko/jbone
 ```
 
-##### With nodejs or browserify
+##### Via nodejs or browserify
 
 ```
 $ npm install jbone --save
@@ -44,7 +52,7 @@ Add a `<script>` element for jbone.js
 <script src="path/to/jbone/dist/jbone.js"></script>
 ```
 
-Or include like npm module (with nodejs or browserify)
+Or include it like npm module (with nodejs or browserify)
 
 ```javascript
 var $ = require('jbone');
@@ -85,11 +93,11 @@ $(".header").addClass("loaded");
 
 ## AJAX, Deferred
 
-This part is not covered on jBone. Yuo can select one of a huge amount implementations AJAX and Promises/A+.
+This part is not covered in jBone. You can choose one of a huge amount of AJAX implementations as well as standard Promises/A+ implementations.
 
 For example: [when](https://github.com/cujojs/when), [Q](https://github.com/kriskowal/q), [simply-deferred](https://github.com/sudhirj/simply-deferred), [AJAX](microjs.com/#ajax).
 
-Example AJAX connecting:
+Example of AJAX connection:
 
 ```javascript
 // connect reqwest on your page https://rawgithub.com/ded/reqwest/master/reqwest.min.js
@@ -101,7 +109,7 @@ $.ajax({
 });
 ```
 
-Example Deferred connecting:
+Example of connection with Deferred Object:
 
 ```javascript
 // connect simply-deferred on your page https://rawgithub.com/sudhirj/simply-deferred/master/deferred.min.js
@@ -114,6 +122,26 @@ $.when(deferred).then(function(response) {
     // some code
 });
 ```
+
+## Browser support
+
+Internet Explorer 11+
+
+Safari 6+
+
+iOS 5+ Safari
+
+Android 2.3+ Browser
+
+Chrome
+
+Firefox
+
+## IE9 polyfills
+
+* [classList](https://github.com/remy/polyfills/blob/master/classList.js) (since IE10)
+* [dataset](https://github.com/remy/polyfills/blob/master/dataset.js) (since IE11)
+
 
 ## API
 
@@ -135,6 +163,11 @@ $.when(deferred).then(function(response) {
 * [.val(value)](https://github.com/kupriyanenko/jbone/wiki/Attributes#valvalue)
 * [.css(propertyName, value)](https://github.com/kupriyanenko/jbone/wiki/Attributes#csspropertyname-value)
 * [.css(properties)](https://github.com/kupriyanenko/jbone/wiki/Attributes#cssproperties)
+* [.addClass(className)](https://github.com/kupriyanenko/jbone/wiki/Attributes#addclassclassname)
+* [.removeClass(className)](https://github.com/kupriyanenko/jbone/wiki/Attributes#removeclassclassname)
+* [.toggleClass(className)](https://github.com/kupriyanenko/jbone/wiki/Attributes#toggleclassclassname)
+* [.toggleClass(className, state)](https://github.com/kupriyanenko/jbone/wiki/Attributes#toggleclassclassname-state)
+* [.hasClass(className)](https://github.com/kupriyanenko/jbone/wiki/Attributes#hasclassclassname)
 
 [Data](https://github.com/kupriyanenko/jbone/wiki/Data)
 
@@ -147,8 +180,8 @@ $.when(deferred).then(function(response) {
 
 [Event](https://github.com/kupriyanenko/jbone/wiki/Event)
 
-* [.on(event[, selector], handler)](https://github.com/kupriyanenko/jbone/wiki/Event#onevent-selector-handler)
-* [.one(event[, selector], handler)](https://github.com/kupriyanenko/jbone/wiki/Event#oneevent-selector-handler)
+* [.on(event[, selector, data], handler)](https://github.com/kupriyanenko/jbone/wiki/Event#onevent-selector-data-handler)
+* [.one(event[, selector, data], handler)](https://github.com/kupriyanenko/jbone/wiki/Event#oneevent-selector-data-handler)
 * [.off(event[, handler])](https://github.com/kupriyanenko/jbone/wiki/Event#offevent-handler)
 * [.trigger(event)](https://github.com/kupriyanenko/jbone/wiki/Event#triggerevent)
 
@@ -157,7 +190,7 @@ $.when(deferred).then(function(response) {
 * [.html()](https://github.com/kupriyanenko/jbone/wiki/Manipulation#html)
 * [.html(content)](https://github.com/kupriyanenko/jbone/wiki/Manipulation#htmlcontent)
 * [.append(content)](https://github.com/kupriyanenko/jbone/wiki/Manipulation#appendcontent)
-* [.appendTo(target)](https://github.com/kupriyanenko/jbone/wiki/Manipulation#appendtotarget)
+* [.appendTo(element)](https://github.com/kupriyanenko/jbone/wiki/Manipulation#appendtoelement)
 * [.empty()](https://github.com/kupriyanenko/jbone/wiki/Manipulation#empty)
 * [.remove()](https://github.com/kupriyanenko/jbone/wiki/Manipulation#remove)
 
@@ -168,12 +201,19 @@ $.when(deferred).then(function(response) {
 * [.eq(index)](https://github.com/kupriyanenko/jbone/wiki/Traversing#eqindex)
 * [.parent()](https://github.com/kupriyanenko/jbone/wiki/Traversing#parent)
 * [.toArray()](https://github.com/kupriyanenko/jbone/wiki/Traversing#toarray)
+* [.add(selector)](https://github.com/kupriyanenko/jbone/wiki/Traversing#addselector)
+* [.add(elements)](https://github.com/kupriyanenko/jbone/wiki/Traversing#addelements)
+* [.add(html)](https://github.com/kupriyanenko/jbone/wiki/Traversing#addhtml)
+* [.add(selection)](https://github.com/kupriyanenko/jbone/wiki/Traversing#addselection)
+* [.add(selector, context)](https://github.com/kupriyanenko/jbone/wiki/Traversing#addselector-context)
 
 [Utilities](https://github.com/kupriyanenko/jbone/wiki/Utilities)
 
 * [jBone.merge(first, second)](https://github.com/kupriyanenko/jbone/wiki/Utilities#jbonemergefirst-second)
 * [jBone.contains(container, contained)](https://github.com/kupriyanenko/jbone/wiki/Utilities#jbonecontainscontainer-contained)
 * [jBone.extend(target[, object1][, objectN])](https://github.com/kupriyanenko/jbone/wiki/Utilities#jboneextendtarget-object1-objectn)
+* [jBone.makeArray(obj)](https://github.com/kupriyanenko/jbone/wiki/Utilities#jbonemakearrayobj)
+* [jBone.unique(array)](https://github.com/kupriyanenko/jbone/wiki/Utilities#jboneuniquearray)
 
 [Array methods](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array/prototype#Methods)
 
@@ -195,6 +235,10 @@ $.when(deferred).then(function(response) {
 * [.map()](https://developer.mozilla.org/docs/JavaScript/Reference/Global_Objects/Array/map)
 * [.reduce()](https://developer.mozilla.org/docs/JavaScript/Reference/Global_Objects/Array/reduce)
 * [.reduceRight()](https://developer.mozilla.org/docs/JavaScript/Reference/Global_Objects/Array/reduceRight)
+
+[Internals](https://github.com/kupriyanenko/jbone/wiki/Internals)
+
+* [.pushStack(elements)](https://github.com/kupriyanenko/jbone/wiki/Internals#pushstackelements)
 
 ## Running the Tests
 

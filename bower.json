@@ -1,6 +1,6 @@
 {
     "name": "scrolly",
-    "version": "0.4.6",
+    "version": "0.5.0",
     "description": "Scrolly: fast vanilla JS scrollbar plugin.",
     "keywords": [
         "scroll", "scrollbar", "scrolly", "bar",
@@ -13,7 +13,7 @@
     },
     "devDependencies": {
         "jbone": "*",
-        "react": "^0.12.1"
+        "react": "^0.14.3"
     },
     "ignore": [
         ".gitignore",

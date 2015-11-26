@@ -1,23 +1,47 @@
 {
   "name": "jbone",
-  "version": "1.0.20",
+  "version": "1.1.2",
+  "description": "Library for DOM manipulation",
   "main": "dist/jbone.js",
+  "homepage": "http://jbone.js.org",
   "ignore": [
-    "**/.*",
-    "node_modules",
-    "bower_components"
+    ".gitignore",
+    ".travis.yml",
+    "component.json",
+    "Gruntfile.js",
+    "package.json",
+    "perf",
+    "src",
+    "build",
+    "test"
   ],
   "devDependencies": {
     "mocha": "1.18.2",
     "expect": "0.2.0",
     "astrobench": "0.1.1"
   },
-  "homepage": "https://github.com/kupriyanenko/jbone",
-  "_release": "1.0.20",
+  "keywords": [
+    "jquery",
+    "jbone",
+    "backbone",
+    "javascript",
+    "DOM",
+    "events",
+    "library"
+  ],
+  "authors": [
+    "Alexey Kupriyanenko <a.kupriyanenko@gmail.com>"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kupriyanenko/jbone"
+  },
+  "_release": "1.1.2",
   "_resolution": {
     "type": "version",
-    "tag": "1.0.20",
-    "commit": "f9a5dacc5f4ed3a7df32953b269684b5745a030a"
+    "tag": "1.1.2",
+    "commit": "54e8ad263492b7e7253674f4ceeb59feb1094be7"
   },
   "_source": "git://github.com/kupriyanenko/jbone.git",
   "_target": "*",
