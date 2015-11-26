@@ -1,4 +1,4 @@
-/*  scrolly v0.5.0, 2015.11.26  */
+/*  scrolly v0.6.0, 2015.11.26  */
 var dataSet = function initDataSet() {
     if (document.documentElement.dataset) {
         return function native(el, prop, value) {
@@ -44,6 +44,11 @@ var dataSet = function initDataSet() {
         message = function (text) {
             return title + ': ' + text;
         },
+
+        // Timeouts for Event callbacks
+        timeouts = {},
+        TIMER_EDGE = 'e',
+        TIMER_UP = 'u',
 
         // Node helpers
         // classList is not supported by IE9
@@ -111,6 +116,22 @@ var dataSet = function initDataSet() {
             return value + 'px';
         },
 
+        clearTimer = function (key) {
+            if (!timeouts[key]) {
+                return;
+            }
+            clearTimeout(timeouts[key]);
+            delete timeouts[key];
+        },
+        dummyTimer = function (key) {
+            clearTimer(key);
+            return (
+                timeouts[key] = setTimeout(function () {
+                    clearTimer(key);
+                }, 500)
+            );
+        },
+
         hasTouch = ('ontouchstart' in document.documentElement),
         wheelEventName = ('onwheel' in document || document.documentMode >= 9)
             ? 'wheel'
@@ -124,7 +145,7 @@ var dataSet = function initDataSet() {
             document.ontouchmove = document.ontouchend = null;
 
             removeClass(this.noUserSelectClass, document.body);
-            removeClass(this.onDragClass, data.bar);
+            removeClass(this.dragClass, data.bar);
         },
         onBegin = function (data, e) {
             var self = this,
@@ -145,7 +166,7 @@ var dataSet = function initDataSet() {
                 };
 
             addClass(this.noUserSelectClass, document.body);
-            addClass(this.onDragClass, data.bar);
+            addClass(this.dragClass, data.bar);
 
             if (hasTouch) {
                 document.ontouchmove = function (e) {
@@ -158,6 +179,19 @@ var dataSet = function initDataSet() {
                 document.body.onmouseup = done;
             }
         },
+        onWheelEdge = function (data, offset) {
+            if (typeof data.onEdge !== 'function') {
+                return;
+            }
+            if (timeouts[TIMER_EDGE]) {
+                dummyTimer(TIMER_EDGE);
+                return;
+            }
+
+            // Bottom edge if (offset > 0)
+            data.onEdge.call(data, offset > 0);
+            dummyTimer(TIMER_EDGE);
+        },
         onWheel = function (data, e) {
             if (data.wrapRatio === 1) {
                 return;
@@ -167,8 +201,12 @@ var dataSet = function initDataSet() {
 
             data.wrapRatio = data.wrapSize / getNodeSize(data.area, data.axis);
             if ((offset > 0) && (offset + data.wrapSize < getNodeSize(data.area, data.axis))) {
+                // Scrolling inside
                 e.preventDefault();
                 e.stopPropagation();
+            } else if (offset !== 0) {
+                onWheelEdge(data, offset);
+                return;
             }
 
             data.wrap['scroll' + axesPos[data.axis]] += e['delta' + data.axis];
@@ -185,7 +223,7 @@ var dataSet = function initDataSet() {
         scrl = {
             // Common defaults for scope, can be changed for all next Bars
             axis: 'Y',
-            onDragClass: 'on-drag',
+            dragClass: 'on-drag',
             onResize: false,
             noUserSelectClass: 'no-user-select',
             thumbMinSize: 24,
@@ -251,6 +289,7 @@ var dataSet = function initDataSet() {
 
                 // Params
                 data.axis = opts.axis || this.axis;
+                data.onEdge = opts.onEdge || false;
                 data.thumbMinSize = opts.thumbMinSize || this.thumbMinSize;
 
                 // Area
@@ -289,7 +328,7 @@ var dataSet = function initDataSet() {
 
                 // Store Data
                 var id = dataSet(node, dataPrefix('id'), scrls.push(data) - 1);
-                data.t = setTimeout(function () {
+                timeouts[TIMER_UP] = setTimeout(function () {
                     scrl.update(id, true);
                 }, 0);
 
@@ -316,10 +355,8 @@ var dataSet = function initDataSet() {
                     return true;
                 }
                 // First update() Timeout
-                if (data.t) {
-                    clearTimeout(data.t);
-                    delete data.t;
-                }
+                clearTimer(TIMER_EDGE);
+                clearTimer(TIMER_UP);
                 // Unwatch
                 if (data.observer) {
                     data.observer.disconnect();

@@ -1,6 +1,6 @@
 {
     "name": "scrolly",
-    "version": "0.5.0",
+    "version": "0.6.0",
     "description": "Scrolly: fast vanilla JS scrollbar plugin.",
     "keywords": [
         "scroll", "scrollbar", "scrolly", "bar",

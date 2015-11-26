@@ -3,8 +3,16 @@ scrolly.bar('article.query');
 // Send element
 scrolly.bar(document.querySelector('article.test2'));
 // jQuery Plugin
-var attrName = 'jQueryPlugin';
-$('.jquery').scrolly()
+var attrName = 'jQueryPlugin', i = 0;
+$('.jquery').scrolly({
+        onEdge: function (offset) {
+            console.log('Edge reached: ' + (offset ? 'Bottom' : 'Top'));
+            if (offset) {
+                $(this.area).append('<p>Added a line,  #' + (++i).toString() + '</p>');
+                scrolly.update(scrolly.getID(this));
+            }
+        }
+    })
     .attr(attrName, 1);
 
 $('.jquery.test4').scrolly('update')

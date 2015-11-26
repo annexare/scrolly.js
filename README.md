@@ -10,12 +10,12 @@ So, the **Browser Support** is same as for [`MutationObserver`](https://develope
 
 ## Features &amp; Usage
 
-* Small (~5.7KB minified), fast, vanilla JS (zero dependencies)
+* Small (~**6KB** minified), fast, vanilla JS (zero dependencies)
 * Nested scrollbars
 * Touch support
 * jQuery/Zepto/jBone plugin
 * React.js Component
-* *Infinite scroll callbacks (soon)*
+* Infinite scroll (top/bottom edge reach) callbacks
 
 ```js
 // Initialize
