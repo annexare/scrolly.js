@@ -1,4 +1,4 @@
-/*  scrolly v0.6.0, 2015.11.26  */
+/*  scrolly v0.6.2, 2015.12.06  */
 var dataSet = function initDataSet() {
     if (document.documentElement.dataset) {
         return function native(el, prop, value) {
@@ -23,6 +23,8 @@ var dataSet = function initDataSet() {
 
 /**
  * Scrolly: fast vanilla JS scrollbar plugin.
+ *
+ * @todo Check for performance: https://developer.mozilla.org/en-US/docs/Web/Events/wheel
  */
 
 ;(function (factory) {
@@ -45,9 +47,12 @@ var dataSet = function initDataSet() {
             return title + ': ' + text;
         },
 
+        AS_BODY_CLASS = 'as-body',
+
         // Timeouts for Event callbacks
         timeouts = {},
-        TIMER_EDGE = 'e',
+        timer = 0,
+        TIMER_MS = 500,
         TIMER_UP = 'u',
 
         // Node helpers
@@ -79,6 +84,26 @@ var dataSet = function initDataSet() {
             node.className = className || '';
 
             return node;
+        },
+        moveNodes = function (fromNode, toNode) {
+            if (!fromNode.hasChildNodes()) {
+                return toNode;
+            }
+
+            var nodeList = [],
+                tagName;
+            for (var i = 0; i < fromNode.childNodes.length; i++) {
+                tagName = (fromNode.childNodes[i].tagName || '').toLowerCase();
+                if (tagName !== 'script' && tagName !== 'style') {
+                    nodeList.push(fromNode.childNodes[i]);
+                }
+            }
+
+            nodeList.forEach(function (node) {
+                toNode.appendChild(node);
+            });
+
+            return toNode;
         },
         wrap = function (node, className) {
             var parent = node.parentNode;
@@ -123,13 +148,15 @@ var dataSet = function initDataSet() {
             clearTimeout(timeouts[key]);
             delete timeouts[key];
         },
-        dummyTimer = function (key) {
-            clearTimer(key);
-            return (
-                timeouts[key] = setTimeout(function () {
-                    clearTimer(key);
-                }, 500)
-            );
+        isTimerExpired = function () {
+            if (!timer || (Date.now() - TIMER_MS > timer)) {
+                return true;
+            }
+
+            return (timer = 0);
+        },
+        setTimer = function () {
+            timer = Date.now();
         },
 
         hasTouch = ('ontouchstart' in document.documentElement),
@@ -183,14 +210,15 @@ var dataSet = function initDataSet() {
             if (typeof data.onEdge !== 'function') {
                 return;
             }
-            if (timeouts[TIMER_EDGE]) {
-                dummyTimer(TIMER_EDGE);
+            if (!isTimerExpired()) {
+                // Extend timer as from now
+                setTimer();
                 return;
             }
 
             // Bottom edge if (offset > 0)
             data.onEdge.call(data, offset > 0);
-            dummyTimer(TIMER_EDGE);
+            setTimer();
         },
         onWheel = function (data, e) {
             if (data.wrapRatio === 1) {
@@ -199,7 +227,7 @@ var dataSet = function initDataSet() {
 
             var offset = (getNodePos(data.wrap, data.axis) + e['delta' + data.axis]);
 
-            data.wrapRatio = data.wrapSize / getNodeSize(data.area, data.axis);
+            //data.wrapRatio = data.wrapSize / getNodeSize(data.area, data.axis);
             if ((offset > 0) && (offset + data.wrapSize < getNodeSize(data.area, data.axis))) {
                 // Scrolling inside
                 e.preventDefault();
@@ -267,9 +295,17 @@ var dataSet = function initDataSet() {
                     console.log(message('Couldn\'t query:'), typeof node, node, params);
                     return false;
                 }
+                var el = node || div(),
+                    isBody = (node === document.body);
+                if (isBody) {
+                    // Extra wrapper for Body tag Scrolly
+                    el = moveNodes(document.body, div());
+
+                    document.body.appendChild(el);
+                }
                 // Check if already initialized
-                if (typeof dataSet(node, dataPrefix('id')) !== 'undefined') {
-                    this.dispose(dataSet(node, dataPrefix('id')));
+                if (typeof dataSet(el, dataPrefix('id')) !== 'undefined') {
+                    this.dispose(dataSet(el, dataPrefix('id')));
                 }
                 // Window Resize
                 if (!this.onResize) {
@@ -293,15 +329,15 @@ var dataSet = function initDataSet() {
                 data.thumbMinSize = opts.thumbMinSize || this.thumbMinSize;
 
                 // Area
-                addClass('area', node);
-                if (hasClass(name, node.parentNode)) {
+                addClass('area', el);
+                if (!isBody && hasClass(name, el.parentNode)) {
                     // Wrap exists
-                    data.wrap = node.parentNode;
+                    data.wrap = el.parentNode;
                 } else {
-                    data.wrap = wrap(node, name);
+                    data.wrap = wrap(el, name + (isBody ? ' ' + AS_BODY_CLASS : ''));
                     data.dispose.wrap = true;
                 }
-                data.area = node;
+                data.area = el;
 
                 // Bar
                 var barClassName = 'bar',
@@ -327,7 +363,7 @@ var dataSet = function initDataSet() {
                 }
 
                 // Store Data
-                var id = dataSet(node, dataPrefix('id'), scrls.push(data) - 1);
+                var id = dataSet(el, dataPrefix('id'), scrls.push(data) - 1);
                 timeouts[TIMER_UP] = setTimeout(function () {
                     scrl.update(id, true);
                 }, 0);
@@ -354,8 +390,7 @@ var dataSet = function initDataSet() {
                 if (!data || (typeof data === 'undefined')) {
                     return true;
                 }
-                // First update() Timeout
-                clearTimer(TIMER_EDGE);
+                // Clear Timers
                 clearTimer(TIMER_UP);
                 // Unwatch
                 if (data.observer) {
@@ -364,10 +399,17 @@ var dataSet = function initDataSet() {
                 // Cleanup
                 removeClass('area', data.area);
                 data.area.removeAttribute('data-' + dataPrefix('id'));
+                var isBody = (data.wrap.parentNode === document.body)
+                    && (data.wrap.className.indexOf(AS_BODY_CLASS) > -1);
                 // Extra Nodes
                 if (data.dispose.wrap) {
                     data.wrap.parentNode.insertBefore(data.area, data.wrap);
                     data.wrap.parentNode.removeChild(data.wrap);
+                }
+                // Extra wrapper for Body tag Scrolly
+                if (isBody) {
+                    moveNodes(data.area, document.body);
+                    document.body.removeChild(data.area);
                 }
                 if (data.dispose.thumb) {
                     data.thumb.parentNode.removeChild(data.thumb);

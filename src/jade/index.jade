@@ -54,10 +54,18 @@ html
                 p The Silence is Coming! We are Dalek Puny Human! K-9 the oncoming storm Demon's Run Cult of Skaro EXTERMINATE! EXTERMINATE! Tick tock goes the clock... Demon's Run Galifreyan EXTERMINATE! Demon's Run Rory the Roman Geronimo! Amy Pond River Song The Shadow Proclamation I hereby invoke The Shadow Proclamation! Reverse the polarity of the positron flow the girl who waited Time War Raxacoricofallapatorius Cult of Skaro Geronimo Reverse the polarity of the positron flow The socks with holes, dummy! EXTERMINATE! Hello sweetie! Cybermen Demon's Run The Supreme Dalek Time Lord Bad Wolf  Time Lord Allons-y Hello sweetie MY VISION IS IMPAIRED! You are better at dying The Silence is Coming! Would you like a jelly baby? I am a Dalek Skaro Spoilers! Davros Stormageddon, Dark Lord of All Amy Pond Amy Pond Time War Skaro
                 p END.
 
+        | Some text node here.
+
 
         script(src=home + '/js/vendor.js')
         script(src=home + '/js/scrolly.js')
         script.
+            // Scrolly for Body
+            scrolly.barNode(document.body, {
+                onEdge: function (offset) {
+                    console.log('Body Edge reached: ' + (offset ? 'Bottom' : 'Top'));
+                }
+            });
             // Send Query
             scrolly.bar('article.query');
             // Send element

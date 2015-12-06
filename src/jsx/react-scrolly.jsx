@@ -39,7 +39,7 @@ var Scrolly = React.createClass({
                     </div>
                 </div>
                 <div className="bar">
-                    <div className="thumb" />
+                    <div className="thumb"></div>
                 </div>
             </div>
         );

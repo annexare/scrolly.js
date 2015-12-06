@@ -22,6 +22,8 @@ So, the **Browser Support** is same as for [`MutationObserver`](https://develope
 var ids = scrolly.bar(query|node|string, params);
 // or
 var id = scrolly.barNode(node, params);
+// Body element is also supported
+var id = scrolly.barNode(document.body, params);
 
 // Update
 scrolly.update(id);
