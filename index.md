@@ -1,5 +1,9 @@
 # Scrolly: fast vanilla JS scrollbar plugin
 
+[![Monthly Downloads](https://img.shields.io/npm/dm/scrolly.svg)](https://www.npmjs.com/package/scrolly)
+[![NPM](https://img.shields.io/npm/v/scrolly.svg "NPM package version")](https://www.npmjs.com/package/scrolly)
+[![Twitter](https://img.shields.io/twitter/follow/annexare.svg?label=follow+@annexare)](https://twitter.com/annexare)
+
 Aim is a fast + good looking scrollbar with zero dependencies, small size &amp; major browsers support.
 So, the **Browser Support** is same as for [`MutationObserver`](https://developer.mozilla.org/en/docs/Web/API/MutationObserver#Browser_compatibility), works in all modern browsers for Desktop and Mobile.
 
