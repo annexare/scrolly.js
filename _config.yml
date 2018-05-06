@@ -1,0 +1,8 @@
+title: Scrolly.js
+description: "Scrolly: fast vanilla JS scrollbar plugin with React.js Component & jQuery/Zepto/jBone plugin"
+google_analytics: UA-23960333-9
+show_downloads: true
+theme: jekyll-theme-cayman
+
+gems:
+  - jekyll-mentions
